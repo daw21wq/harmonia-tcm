@@ -209,6 +209,7 @@
                 <div class="nav-item" onclick="showSection('products')">🥗 Produkty</div>
                 <div class="nav-item" onclick="showSection('recipes')">🍳 Przepisy</div>
                 <div class="nav-item" onclick="showSection('profile')">👤 Profil</div>
+                <div class="nav-item" onclick="logout()" style="background: #f44336;">🚪 Wyloguj</div>
             </div>
 
             <div id="home" class="content-section active">
@@ -487,3 +488,49 @@
                 document.getElementById('aiRecipes').textContent = userStats.aiRecipes;
             }
         }
+
+        function saveUserStats() {
+            localStorage.setItem('harmonia_stats', JSON.stringify(userStats));
+            updateStatsDisplay();
+        }
+
+        function showLogin() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+        }
+
+        function showRegister() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+        }
+
+        function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                alert('Wprowadź email i hasło!');
+                return;
+            }
+
+            // Check demo account
+            if (demoUsers[email] && demoUsers[email].password === password) {
+                currentUser = { email: email, name: demoUsers[email].name };
+                localStorage.setItem('harmonia_user', JSON.stringify(currentUser));
+                showApp();
+                return;
+            }
+
+            // Check registered users
+            const users = JSON.parse(localStorage.getItem('harmonia_users') || '{}');
+            if (users[email] && users[email].password === password) {
+                currentUser = { email: email, name: users[email].name };
+                localStorage.setItem('harmonia_user', JSON.stringify(currentUser));
+                showApp();
+                return;
+            }
+
+            alert('Nieprawidłowy email lub hasło!');
+        }
+
+        function register()
