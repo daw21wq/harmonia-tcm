@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HarmoniaTCM - Medycyna Chińska</title>
+    <title>HarmoniaTCM - Medycyna Chińska z AI</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -36,6 +36,7 @@
             transition: background 0.3s;
         }
         .btn:hover { background: #45a049; }
+        .btn-small { padding: 8px 16px; font-size: 14px; width: auto; margin-top: 10px; }
         .link-btn { color: #4CAF50; text-decoration: none; font-weight: 600; }
         .app-content { display: none; }
         .nav-menu { 
@@ -78,18 +79,80 @@
         .recipe-title { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 8px; }
         .recipe-meta { color: #4CAF50; font-size: 14px; margin-bottom: 10px; }
         .recipe-description { color: #666; line-height: 1.5; }
+
+        /* AI Chat Styles */
+        .ai-chat-button { 
+            position: fixed; bottom: 20px; right: 20px; background: #4CAF50; color: white;
+            width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-size: 24px; cursor: pointer; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s; border: none; z-index: 1000;
+        }
+        .ai-chat-button:hover { transform: scale(1.1); background: #45a049; }
+        .chat-window { 
+            display: none; position: fixed; bottom: 90px; right: 20px; width: 350px; height: 400px;
+            background: white; border-radius: 15px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            flex-direction: column; z-index: 1000;
+        }
+        .chat-header { 
+            background: #4CAF50; color: white; padding: 15px; border-radius: 15px 15px 0 0;
+            font-weight: bold; display: flex; justify-content: space-between; align-items: center;
+        }
+        .chat-close { cursor: pointer; font-size: 18px; }
+        .chat-messages { 
+            flex: 1; padding: 15px; overflow-y: auto; max-height: 250px;
+        }
+        .chat-input-area { 
+            padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px;
+        }
+        .chat-input { 
+            flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none;
+        }
+        .chat-send { 
+            background: #4CAF50; color: white; border: none; padding: 10px 15px;
+            border-radius: 20px; cursor: pointer;
+        }
+        .message { 
+            margin-bottom: 15px; padding: 10px 15px; border-radius: 15px; max-width: 80%; word-wrap: break-word;
+        }
+        .message.user { background: #4CAF50; color: white; margin-left: auto; }
+        .message.ai { background: #f1f3f4; color: #333; }
+        .message.loading { background: #e0e0e0; color: #666; font-style: italic; }
+
+        /* API Settings */
+        .api-settings { 
+            background: #fff3cd; padding: 15px; border-radius: 10px; margin-bottom: 20px;
+            border: 1px solid #ffeaa7;
+        }
+        .api-input { 
+            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-top: 10px;
+        }
+        .success-message { 
+            background: #d4edda; color: #155724; padding: 10px; border-radius: 5px;
+            margin-top: 10px; display: none;
+        }
+        .error-message { 
+            background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px;
+            margin-top: 10px; display: none;
+        }
+        .ai-recipe-generator { 
+            background: #e8f5e8; padding: 20px; border-radius: 10px; margin-bottom: 20px;
+            text-align: center;
+        }
+        .loading { opacity: 0.6; pointer-events: none; }
+
         @media (max-width: 768px) {
             .container { padding: 10px; }
             .nav-menu { flex-direction: column; align-items: center; }
             .nav-item { margin: 3px 0; text-align: center; min-width: 120px; }
             .cards-grid { grid-template-columns: 1fr; }
+            .chat-window { width: calc(100vw - 40px); height: 300px; }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="logo">🌿 HarmoniaTCM</div>
-        <div class="subtitle">Sezonowość według Medycyny Chińskiej</div>
+        <div class="logo">🌿 HarmoniaTCM AI</div>
+        <div class="subtitle">Sezonowość według Medycyny Chińskiej z AI</div>
     </div>
 
     <div id="loginForm" class="login-form">
@@ -156,12 +219,13 @@
                 
                 <div class="cards-grid">
                     <div class="card">
-                        <div class="card-title">Zalecenia na dziś</div>
+                        <div class="card-title">🤖 AI Zalecenia na dziś</div>
                         <div class="card-content">
                             • Spożywaj świeże kiełki i młode warzywa<br>
                             • Pij ciepłą wodę z cytryną rano<br>
                             • Wykonuj łagodne ćwiczenia rozciągające<br>
-                            • Unikaj nadmiernie tłustych potraw
+                            • Unikaj nadmiernie tłustych potraw<br>
+                            <button class="btn btn-small" onclick="getAIRecommendations()">Pobierz AI zalecenia</button>
                         </div>
                     </div>
                     
@@ -236,6 +300,10 @@
             <div id="products" class="content-section">
                 <h2 style="margin-bottom: 30px; text-align: center;">🥗 Produkty sezonowe na Wiosnę</h2>
                 
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <button class="btn btn-small" onclick="getAIProductRecommendations()">🤖 AI rekomendacje produktów</button>
+                </div>
+                
                 <div class="cards-grid">
                     <div class="card">
                         <div class="card-title">🌱 Kiełki i młode warzywa</div>
@@ -282,6 +350,12 @@
             <div id="recipes" class="content-section">
                 <h2 style="margin-bottom: 30px; text-align: center;">🍳 Przepisy wiosenne</h2>
                 
+                <div class="ai-recipe-generator">
+                    <h3>🤖 Generator przepisów AI</h3>
+                    <p>Pozwól AI stworzyć spersonalizowany przepis zgodny z TCM!</p>
+                    <button class="btn btn-small" onclick="generateAIRecipe()">Generuj przepis AI</button>
+                </div>
+                
                 <div class="recipe-item">
                     <div class="recipe-title">🌱 Wiosenna zupa detoks</div>
                     <div class="recipe-meta">Czas przygotowania: 30 min • Porcje: 4 • Właściwości: Oczyszczające</div>
@@ -304,34 +378,47 @@
             <div id="profile" class="content-section">
                 <h2 style="margin-bottom: 30px; text-align: center;">👤 Twój profil TCM</h2>
                 
+                <div class="api-settings">
+                    <h3>🔑 Ustawienia OpenAI API</h3>
+                    <p>Aby korzystać z funkcji AI, wprowadź swój klucz API OpenAI:</p>
+                    <input type="password" id="apiKey" class="api-input" placeholder="sk-proj-..." value="">
+                    <button onclick="saveApiKey()" class="btn btn-small">Zapisz klucz API</button>
+                    <div id="apiSuccess" class="success-message">Klucz API został zapisany!</div>
+                    <div id="apiError" class="error-message">Wprowadź poprawny klucz API!</div>
+                    <p style="margin-top: 10px; font-size: 12px; color: #666;">
+                        Potrzebujesz klucz? <a href="https://platform.openai.com/api-keys" target="_blank">Utwórz tutaj</a>
+                    </p>
+                </div>
+                
                 <div class="cards-grid">
                     <div class="card">
-                        <div class="card-title">🧬 Analiza konstytucji</div>
+                        <div class="card-title">🧬 AI Analiza konstytucji</div>
                         <div class="card-content">
                             <strong>Dominujący żywioł:</strong> Drzewo (60%)<br>
                             <strong>Drugorzędny:</strong> Woda (25%)<br>
                             <strong>Konstytucja:</strong> Typ artysty/kreatora<br>
-                            <button class="btn" style="margin-top: 10px; width: auto; padding: 8px 16px;">Wykonaj test</button>
+                            <button class="btn btn-small" onclick="getAIConstitutionAnalysis()">Analiza AI</button>
                         </div>
                     </div>
                     
                     <div class="card">
                         <div class="card-title">📊 Twoje statystyki</div>
                         <div class="card-content">
-                            <strong>Dni używania aplikacji:</strong> 14<br>
-                            <strong>Przepisy wypróbowane:</strong> 8<br>
-                            <strong>Ulubione produkty:</strong> 12<br>
+                            <strong>Dni używania aplikacji:</strong> <span id="daysUsed">1</span><br>
+                            <strong>Zapytania AI:</strong> <span id="aiQueries">0</span><br>
+                            <strong>Przepisy AI:</strong> <span id="aiRecipes">0</span><br>
                             <strong>Postępy:</strong> Bardzo dobre
                         </div>
                     </div>
                     
                     <div class="card">
-                        <div class="card-title">💡 Personalizowane zalecenia</div>
-                        <div class="card-content">
+                        <div class="card-title">💡 AI Personalizowane zalecenia</div>
+                        <div class="card-content" id="aiRecommendations">
                             • Zwiększ spożycie produktów kwaśnych<br>
                             • Ogranicz słodycze wieczorem<br>
                             • Dodaj więcej ćwiczeń rozciągających<br>
-                            • Pij ciepłe napoje rano
+                            • Pij ciepłe napoje rano<br>
+                            <button class="btn btn-small" onclick="getPersonalizedAIRecommendations()">Odśwież AI zalecenia</button>
                         </div>
                     </div>
                 </div>
@@ -339,16 +426,42 @@
         </div>
     </div>
 
+    <!-- AI Chat -->
+    <button class="ai-chat-button" onclick="toggleChat()">🤖</button>
+    
+    <div id="chatWindow" class="chat-window">
+        <div class="chat-header">
+            🤖 Asystent TCM AI
+            <span class="chat-close" onclick="toggleChat()">✕</span>
+        </div>
+        <div id="chatMessages" class="chat-messages">
+            <div class="message ai">Cześć! Jestem Twoim AI asystentem TCM. Mogę odpowiedzieć na pytania o medycynę chińską, sezonowość, receptury i wiele więcej! Zadaj mi pytanie.</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" class="chat-input" placeholder="Zadaj pytanie AI..." onkeypress="handleChatEnter(event)">
+            <button class="chat-send" onclick="sendChatMessage()">Wyślij</button>
+        </div>
+    </div>
+
     <script>
+        // Application state
         let currentUser = null;
         let isLoggedIn = false;
+        let chatOpen = false;
+        let userStats = {
+            daysUsed: 1,
+            aiQueries: 0,
+            aiRecipes: 0
+        };
 
         const demoUsers = {
             'demo@harmonia.pl': { password: 'demo123', name: 'Demo User' }
         };
 
+        // Initialize app
         window.addEventListener('load', function() {
             checkAutoLogin();
+            loadUserStats();
         });
 
         function checkAutoLogin() {
@@ -359,98 +472,18 @@
             }
         }
 
-        function showLogin() {
-            document.getElementById('loginForm').style.display = 'block';
-            document.getElementById('registerForm').style.display = 'none';
-        }
-
-        function showRegister() {
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('registerForm').style.display = 'block';
-        }
-
-        function login() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            if (!email || !password) {
-                alert('Wprowadź email i hasło!');
-                return;
+        function loadUserStats() {
+            const stats = localStorage.getItem('harmonia_stats');
+            if (stats) {
+                userStats = JSON.parse(stats);
+                updateStatsDisplay();
             }
-
-            if (demoUsers[email] && demoUsers[email].password === password) {
-                currentUser = { email: email, name: demoUsers[email].name };
-                localStorage.setItem('harmonia_user', JSON.stringify(currentUser));
-                showApp();
-                return;
-            }
-
-            const users = JSON.parse(localStorage.getItem('harmonia_users') || '{}');
-            if (users[email] && users[email].password === password) {
-                currentUser = { email: email, name: users[email].name };
-                localStorage.setItem('harmonia_user', JSON.stringify(currentUser));
-                showApp();
-                return;
-            }
-
-            alert('Nieprawidłowy email lub hasło!');
         }
 
-        function register() {
-            const email = document.getElementById('regEmail').value;
-            const password = document.getElementById('regPassword').value;
-
-            if (!email || !password) {
-                alert('Wprowadź email i hasło!');
-                return;
+        function updateStatsDisplay() {
+            if (document.getElementById('daysUsed')) {
+                document.getElementById('daysUsed').textContent = userStats.daysUsed;
+                document.getElementById('aiQueries').textContent = userStats.aiQueries;
+                document.getElementById('aiRecipes').textContent = userStats.aiRecipes;
             }
-
-            if (password.length < 6) {
-                alert('Hasło musi mieć co najmniej 6 znaków!');
-                return;
-            }
-
-            const users = JSON.parse(localStorage.getItem('harmonia_users') || '{}');
-            
-            if (users[email]) {
-                alert('Użytkownik o tym emailu już istnieje!');
-                return;
-            }
-
-            users[email] = { password: password, name: email.split('@')[0] };
-            localStorage.setItem('harmonia_users', JSON.stringify(users));
-
-            currentUser = { email: email, name: users[email].name };
-            localStorage.setItem('harmonia_user', JSON.stringify(currentUser));
-            
-            alert('Rejestracja udana! Zostałeś automatycznie zalogowany.');
-            showApp();
         }
-
-        function showApp() {
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('registerForm').style.display = 'none';
-            document.getElementById('appContent').style.display = 'block';
-            isLoggedIn = true;
-        }
-
-        function showSection(sectionName) {
-            const sections = document.querySelectorAll('.content-section');
-            sections.forEach(section => section.classList.remove('active'));
-            
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => item.classList.remove('active'));
-            
-            document.getElementById(sectionName).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        function logout() {
-            localStorage.removeItem('harmonia_user');
-            currentUser = null;
-            isLoggedIn = false;
-            location.reload();
-        }
-    </script>
-</body>
-</html>
