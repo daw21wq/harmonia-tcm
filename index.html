@@ -4,399 +4,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HarmoniaTCM - Medycyna Chińska</title>
-    <meta name="description" content="Aplikacja do sezonowości według medycyny chińskiej">
-    
-    <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#4CAF50">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="HarmoniaTCM">
-    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
+            min-height: 100vh; color: #333;
         }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 20px;
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { 
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            padding: 15px; border-radius: 15px; margin-bottom: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
-        
-        .logo {
-            text-align: center;
-            font-size: 28px;
-            font-weight: bold;
-            color: #4CAF50;
-            margin-bottom: 10px;
+        .logo { text-align: center; font-size: 28px; font-weight: bold; color: #4CAF50; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #666; font-size: 16px; }
+        .login-form { 
+            background: white; padding: 30px; border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); max-width: 400px; margin: 50px auto;
         }
-        
-        .subtitle {
-            text-align: center;
-            color: #666;
-            font-size: 16px;
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
+        .form-group input { 
+            width: 100%; padding: 12px; border: 2px solid #e1e5e9; border-radius: 10px;
+            font-size: 16px; transition: border-color 0.3s;
         }
-        
-        .login-form {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            margin: 50px auto;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e1e5e9;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        
-        .form-group input:focus {
-            outline: none;
-            border-color: #4CAF50;
-        }
-        
-        .btn {
-            width: 100%;
-            padding: 15px;
-            background: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
+        .form-group input:focus { outline: none; border-color: #4CAF50; }
+        .btn { 
+            width: 100%; padding: 15px; background: #4CAF50; color: white; border: none;
+            border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer;
             transition: background 0.3s;
         }
-        
-        .btn:hover {
-            background: #45a049;
+        .btn:hover { background: #45a049; }
+        .link-btn { color: #4CAF50; text-decoration: none; font-weight: 600; }
+        .app-content { display: none; }
+        .nav-menu { 
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            padding: 15px; border-radius: 15px; margin-bottom: 20px;
+            display: flex; justify-content: space-around; flex-wrap: wrap;
         }
-        
-        .link-btn {
-            color: #4CAF50;
-            text-decoration: none;
-            font-weight: 600;
+        .nav-item { 
+            background: #4CAF50; color: white; padding: 10px 20px; border-radius: 25px;
+            text-decoration: none; margin: 5px; transition: all 0.3s; cursor: pointer;
         }
-        
-        .app-content {
-            display: none;
+        .nav-item:hover, .nav-item.active { background: #45a049; transform: translateY(-2px); }
+        .content-section { 
+            display: none; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            padding: 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); margin-bottom: 20px;
         }
-        
-        .nav-menu {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-        }
-        
-        .nav-item {
-            background: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 25px;
-            text-decoration: none;
-            margin: 5px;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-        
-        .nav-item:hover, .nav-item.active {
-            background: #45a049;
-            transform: translateY(-2px);
-        }
-        
-        .content-section {
-            display: none;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-        
-        .content-section.active {
-            display: block;
-        }
-        
-        .season-info {
+        .content-section.active { display: block; }
+        .season-info { 
             background: linear-gradient(135deg, #81C784 0%, #4CAF50 100%);
-            color: white;
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            text-align: center;
+            color: white; padding: 25px; border-radius: 15px; margin-bottom: 20px; text-align: center;
         }
-        
-        .season-title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 10px;
+        .season-title { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
+        .season-organs { font-size: 18px; opacity: 0.9; }
+        .cards-grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px; margin-top: 20px;
         }
-        
-        .season-organs {
-            font-size: 18px;
-            opacity: 0.9;
+        .card { 
+            background: #f8f9fa; padding: 20px; border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); transition: transform 0.3s;
         }
-        
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
+        .card:hover { transform: translateY(-5px); }
+        .card-title { font-size: 18px; font-weight: bold; color: #4CAF50; margin-bottom: 10px; }
+        .card-content { color: #666; line-height: 1.6; }
+        .recipe-item { 
+            background: white; padding: 20px; border-radius: 15px; margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); cursor: pointer; transition: all 0.3s;
         }
-        
-        .card {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .card-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #4CAF50;
-            margin-bottom: 10px;
-        }
-        
-        .card-content {
-            color: #666;
-            line-height: 1.6;
-        }
-        
-        .recipe-item {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .recipe-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-        
-        .recipe-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 8px;
-        }
-        
-        .recipe-meta {
-            color: #4CAF50;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-        
-        .recipe-description {
-            color: #666;
-            line-height: 1.5;
-        }
-        
-        .ai-chat {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #4CAF50;
-            color: white;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s;
-        }
-        
-        .ai-chat:hover {
-            transform: scale(1.1);
-            background: #45a049;
-        }
-        
-        .chat-window {
-            display: none;
-            position: fixed;
-            bottom: 90px;
-            right: 20px;
-            width: 350px;
-            height: 400px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            flex-direction: column;
-        }
-        
-        .chat-header {
-            background: #4CAF50;
-            color: white;
-            padding: 15px;
-            border-radius: 15px 15px 0 0;
-            font-weight: bold;
-        }
-        
-        .chat-messages {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-        }
-        
-        .chat-input-area {
-            padding: 15px;
-            border-top: 1px solid #eee;
-        }
-        
-        .chat-input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            outline: none;
-        }
-        
-        .message {
-            margin-bottom: 15px;
-            padding: 10px 15px;
-            border-radius: 15px;
-            max-width: 80%;
-        }
-        
-        .message.user {
-            background: #4CAF50;
-            color: white;
-            margin-left: auto;
-        }
-        
-        .message.ai {
-            background: #f1f3f4;
-            color: #333;
-        }
-        
-        .api-settings {
-            background: #fff3cd;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ffeaa7;
-        }
-        
-        .api-input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-top: 10px;
-        }
-        
-        .btn-small {
-            padding: 8px 16px;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-        
-        .success-message {
-            background: #d4edda;
-            color: #155724;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
-            display: none;
-        }
-        
-        .error-message {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
-            display: none;
-        }
-        
+        .recipe-item:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); }
+        .recipe-title { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 8px; }
+        .recipe-meta { color: #4CAF50; font-size: 14px; margin-bottom: 10px; }
+        .recipe-description { color: #666; line-height: 1.5; }
         @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .nav-menu {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .nav-item {
-                margin: 3px 0;
-                text-align: center;
-                min-width: 120px;
-            }
-            
-            .cards-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .chat-window {
-                width: calc(100vw - 40px);
-                height: 300px;
-            }
+            .container { padding: 10px; }
+            .nav-menu { flex-direction: column; align-items: center; }
+            .nav-item { margin: 3px 0; text-align: center; min-width: 120px; }
+            .cards-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <div class="header">
         <div class="logo">🌿 HarmoniaTCM</div>
         <div class="subtitle">Sezonowość według Medycyny Chińskiej</div>
     </div>
 
-    <!-- Login Form -->
     <div id="loginForm" class="login-form">
         <h2 style="text-align: center; margin-bottom: 30px; color: #333;">Zaloguj się do HarmoniaTCM</h2>
         
@@ -423,7 +118,6 @@
         </div>
     </div>
 
-    <!-- Register Form -->
     <div id="registerForm" class="login-form" style="display: none;">
         <h2 style="text-align: center; margin-bottom: 30px; color: #333;">Zarejestruj się</h2>
         
@@ -444,10 +138,8 @@
         </p>
     </div>
 
-    <!-- App Content -->
     <div id="appContent" class="app-content">
         <div class="container">
-            <!-- Navigation -->
             <div class="nav-menu">
                 <div class="nav-item active" onclick="showSection('home')">🏠 Główna</div>
                 <div class="nav-item" onclick="showSection('calendar')">📅 Kalendarz</div>
@@ -456,7 +148,6 @@
                 <div class="nav-item" onclick="showSection('profile')">👤 Profil</div>
             </div>
 
-            <!-- Home Section -->
             <div id="home" class="content-section active">
                 <div class="season-info">
                     <div class="season-title">🌸 Wiosna (13 lutego - 25 kwietnia)</div>
@@ -486,7 +177,6 @@
                 </div>
             </div>
 
-            <!-- Calendar Section -->
             <div id="calendar" class="content-section">
                 <h2 style="margin-bottom: 30px; text-align: center;">📅 Kalendarz TCM</h2>
                 
@@ -543,7 +233,6 @@
                 </div>
             </div>
 
-            <!-- Products Section -->
             <div id="products" class="content-section">
                 <h2 style="margin-bottom: 30px; text-align: center;">🥗 Produkty sezonowe na Wiosnę</h2>
                 
@@ -590,45 +279,30 @@
                 </div>
             </div>
 
-            <!-- Recipes Section -->
             <div id="recipes" class="content-section">
                 <h2 style="margin-bottom: 30px; text-align: center;">🍳 Przepisy wiosenne</h2>
                 
-                <div class="recipe-item" onclick="showRecipeDetails('spring-soup')">
+                <div class="recipe-item">
                     <div class="recipe-title">🌱 Wiosenna zupa detoks</div>
                     <div class="recipe-meta">Czas przygotowania: 30 min • Porcje: 4 • Właściwości: Oczyszczające</div>
                     <div class="recipe-description">Lekka zupa z młodych warzyw, pokrzywy i ziół zgodna z zasadami wiosennego oczyszczania według TCM.</div>
                 </div>
                 
-                <div class="recipe-item" onclick="showRecipeDetails('spring-salad')">
+                <div class="recipe-item">
                     <div class="recipe-title">🥗 Sałatka z kiełkami</div>
                     <div class="recipe-meta">Czas przygotowania: 15 min • Porcje: 2 • Właściwości: Regenerujące</div>
                     <div class="recipe-description">Świeża sałatka z różnych kiełków, młodych liści i dressingiem z octu jabłkowego.</div>
                 </div>
                 
-                <div class="recipe-item" onclick="showRecipeDetails('spring-rice')">
+                <div class="recipe-item">
                     <div class="recipe-title">🍚 Kleik ryżowy z kiełkami</div>
                     <div class="recipe-meta">Czas przygotowania: 45 min • Porcje: 2 • Właściwości: Łagodzące</div>
                     <div class="recipe-description">Tradycyjny chiński kleik z dodatkiem świeżych kiełków i delikatnych przypraw.</div>
                 </div>
-                
-                <div style="text-align: center; margin-top: 30px;">
-                    <button class="btn" style="width: auto; padding: 12px 30px;" onclick="generateAIRecipe()">🤖 Generuj przepis AI</button>
-                </div>
             </div>
 
-            <!-- Profile Section -->
             <div id="profile" class="content-section">
                 <h2 style="margin-bottom: 30px; text-align: center;">👤 Twój profil TCM</h2>
-                
-                <div class="api-settings">
-                    <h3>🔑 Ustawienia OpenAI API</h3>
-                    <p>Aby korzystać z funkcji AI, wprowadź swój klucz API OpenAI:</p>
-                    <input type="password" id="apiKey" class="api-input" placeholder="sk-proj-..." value="">
-                    <button onclick="saveApiKey()" class="btn btn-small">Zapisz klucz API</button>
-                    <div id="apiSuccess" class="success-message">Klucz API został zapisany!</div>
-                    <div id="apiError" class="error-message">Wprowadź poprawny klucz API!</div>
-                </div>
                 
                 <div class="cards-grid">
                     <div class="card">
@@ -637,7 +311,7 @@
                             <strong>Dominujący żywioł:</strong> Drzewo (60%)<br>
                             <strong>Drugorzędny:</strong> Woda (25%)<br>
                             <strong>Konstytucja:</strong> Typ artysty/kreatora<br>
-                            <button class="btn btn-small" onclick="startConstitutionTest()">Wykonaj test ponownie</button>
+                            <button class="btn" style="margin-top: 10px; width: auto; padding: 8px 16px;">Wykonaj test</button>
                         </div>
                     </div>
                     
@@ -647,7 +321,7 @@
                             <strong>Dni używania aplikacji:</strong> 14<br>
                             <strong>Przepisy wypróbowane:</strong> 8<br>
                             <strong>Ulubione produkty:</strong> 12<br>
-                            <strong>Zapytania AI:</strong> 24
+                            <strong>Postępy:</strong> Bardzo dobre
                         </div>
                     </div>
                     
@@ -665,34 +339,14 @@
         </div>
     </div>
 
-    <!-- AI Chat -->
-    <div class="ai-chat" onclick="toggleChat()">🤖</div>
-    
-    <div id="chatWindow" class="chat-window">
-        <div class="chat-header">
-            Asystent TCM
-            <span style="float: right; cursor: pointer;" onclick="toggleChat()">✕</span>
-        </div>
-        <div id="chatMessages" class="chat-messages">
-            <div class="message ai">Cześć! Jestem Twoim asystentem TCM. Zadaj mi pytanie o medycynę chińską, sezonowość czy receptury!</div>
-        </div>
-        <div class="chat-input-area">
-            <input type="text" id="chatInput" class="chat-input" placeholder="Zadaj pytanie..." onkeypress="handleChatEnter(event)">
-        </div>
-    </div>
-
     <script>
-        // Application state
         let currentUser = null;
         let isLoggedIn = false;
-        let chatOpen = false;
 
-        // Demo users
         const demoUsers = {
             'demo@harmonia.pl': { password: 'demo123', name: 'Demo User' }
         };
 
-        // Initialize app
         window.addEventListener('load', function() {
             checkAutoLogin();
         });
@@ -724,7 +378,6 @@
                 return;
             }
 
-            // Check demo account
             if (demoUsers[email] && demoUsers[email].password === password) {
                 currentUser = { email: email, name: demoUsers[email].name };
                 localStorage.setItem('harmonia_user', JSON.stringify(currentUser));
@@ -732,7 +385,6 @@
                 return;
             }
 
-            // Check registered users
             const users = JSON.parse(localStorage.getItem('harmonia_users') || '{}');
             if (users[email] && users[email].password === password) {
                 currentUser = { email: email, name: users[email].name };
@@ -749,3 +401,56 @@
             const password = document.getElementById('regPassword').value;
 
             if (!email || !password) {
+                alert('Wprowadź email i hasło!');
+                return;
+            }
+
+            if (password.length < 6) {
+                alert('Hasło musi mieć co najmniej 6 znaków!');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('harmonia_users') || '{}');
+            
+            if (users[email]) {
+                alert('Użytkownik o tym emailu już istnieje!');
+                return;
+            }
+
+            users[email] = { password: password, name: email.split('@')[0] };
+            localStorage.setItem('harmonia_users', JSON.stringify(users));
+
+            currentUser = { email: email, name: users[email].name };
+            localStorage.setItem('harmonia_user', JSON.stringify(currentUser));
+            
+            alert('Rejestracja udana! Zostałeś automatycznie zalogowany.');
+            showApp();
+        }
+
+        function showApp() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('appContent').style.display = 'block';
+            isLoggedIn = true;
+        }
+
+        function showSection(sectionName) {
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+            
+            document.getElementById(sectionName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function logout() {
+            localStorage.removeItem('harmonia_user');
+            currentUser = null;
+            isLoggedIn = false;
+            location.reload();
+        }
+    </script>
+</body>
+</html>
