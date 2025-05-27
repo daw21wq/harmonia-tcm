@@ -3,48 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seasonal Harmony</title>
+    <title>Seasonal Harmony Pro</title>
     
-    <!-- Tailwind CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
-    <!-- Vue.js -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.31/dist/vue.global.min.js"></script>
-    
-    <!-- Additional Libraries -->
+    <!-- Biblioteki -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.3.4/dist/vue.global.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vuex@4.0.0/dist/vuex.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/build/pdf.min.js"></script>
+    
+    <!-- Styling -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100">
-    <div id="app" class="container mx-auto p-4">
+<body>
+    <div id="app" class="min-h-screen bg-gray-100">
         <!-- Nawigacja -->
-        <nav class="flex justify-between items-center mb-8">
-            <h1 class="text-2xl font-bold">Seasonal Harmony</h1>
+        <nav class="bg-blue-600 text-white p-4 flex justify-between">
+            <h1 class="text-2xl font-bold">Seasonal Harmony Pro</h1>
             <div>
                 <button @click="toggleLanguage" class="mr-4">
                     <i class="fas fa-language"></i> 
                     {{ currentLanguage === 'pl' ? 'EN' : 'PL' }}
                 </button>
-                <button @click="logout" v-if="isLoggedIn">
-                    <i class="fas fa-sign-out-alt"></i> Wyloguj
+                <button v-if="isLoggedIn" @click="logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
             </div>
         </nav>
 
-        <!-- Logowanie -->
-        <div v-if="!isLoggedIn" class="login-section">
-            <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-                <h2 class="text-center text-xl mb-4">{{ translations[currentLanguage].login }}</h2>
+        <!-- Ekran logowania -->
+        <div v-if="!isLoggedIn" class="login-container max-w-md mx-auto mt-10">
+            <div class="bg-white shadow-md rounded px-8 pt-6 pb-8">
+                <h2 class="text-2xl mb-6 text-center">{{ translations[currentLanguage].login }}</h2>
                 
                 <div class="mb-4">
                     <input 
                         type="email" 
                         v-model="email" 
                         :placeholder="translations[currentLanguage].email"
-                        class="shadow appearance-none border rounded w-full py-2 px-3"
+                        class="w-full p-2 border rounded"
                     >
                 </div>
                 
@@ -53,65 +49,76 @@
                         type="password" 
                         v-model="password" 
                         :placeholder="translations[currentLanguage].password"
-                        class="shadow appearance-none border rounded w-full py-2 px-3"
+                        class="w-full p-2 border rounded"
                     >
                 </div>
 
-                <div class="flex items-center justify-between">
+                <div class="flex justify-between">
                     <button 
                         @click="login" 
-                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        class="bg-blue-500 text-white px-4 py-2 rounded"
                     >
                         {{ translations[currentLanguage].login }}
                     </button>
                     
                     <button 
                         @click="googleLogin" 
-                        class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                        class="bg-red-500 text-white px-4 py-2 rounded flex items-center"
                     >
-                        <i class="fab fa-google mr-2"></i>
-                        Google Login
+                        <i class="fab fa-google mr-2"></i> Google Login
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Główny dashboard -->
-        <div v-if="isLoggedIn" class="dashboard">
-            <!-- Sezonowy kalendarz -->
-            <div class="seasonal-calendar mb-8">
-                <h2 class="text-xl font-bold mb-4">
+        <!-- Dashboard -->
+        <div v-if="isLoggedIn" class="container mx-auto p-4">
+            <!-- Sekcja przepisów AI -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold mb-4">
+                    {{ translations[currentLanguage].aiRecipes }}
+                </h2>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div 
+                        v-for="recipe in aiGeneratedRecipes" 
+                        :key="recipe.id" 
+                        class="bg-white p-4 rounded shadow"
+                    >
+                        <h3 class="font-bold">{{ recipe.name }}</h3>
+                        <p>{{ recipe.description }}</p>
+                        <button 
+                            @click="generateRecipe" 
+                            class="mt-2 bg-green-500 text-white px-3 py-1 rounded"
+                        >
+                            {{ translations[currentLanguage].regenerate }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kalendarz sezonowy -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold mb-4">
                     {{ translations[currentLanguage].seasonalCalendar }}
                 </h2>
-                <div class="grid grid-cols-7 gap-2">
+                <div class="grid md:grid-cols-4 gap-4">
                     <div 
-                        v-for="day in seasonalDays" 
-                        :key="day.date"
-                        class="p-2 bg-white rounded shadow text-center"
+                        v-for="event in seasonalEvents" 
+                        :key="event.date" 
+                        class="bg-white p-4 rounded shadow"
                     >
-                        {{ day.date }} - {{ day.event }}
+                        <h3 class="font-bold">{{ event.date }}</h3>
+                        <p>{{ event.description }}</p>
                     </div>
                 </div>
             </div>
 
             <!-- Lista zakupów -->
-            <div class="shopping-list">
-                <h2 class="text-xl font-bold mb-4">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold mb-4">
                     {{ translations[currentLanguage].shoppingList }}
                 </h2>
-                <ul>
-                    <li 
-                        v-for="item in shoppingItems" 
-                        :key="item.id" 
-                        class="flex justify-between items-center bg-white p-2 mb-2 rounded"
-                    >
-                        {{ item.name }}
-                        <button @click="removeItem(item.id)">
-                            <i class="fas fa-trash text-red-500"></i>
-                        </button>
-                    </li>
-                </ul>
-                <div class="flex mt-4">
+                <div class="flex mb-4">
                     <input 
                         v-model="newItem" 
                         :placeholder="translations[currentLanguage].addItem"
@@ -119,10 +126,46 @@
                     >
                     <button 
                         @click="addItem" 
-                        class="bg-green-500 text-white p-2 rounded"
+                        class="bg-blue-500 text-white px-4 py-2 rounded"
                     >
                         {{ translations[currentLanguage].add }}
                     </button>
+                </div>
+                <ul>
+                    <li 
+                        v-for="(item, index) in shoppingList" 
+                        :key="index" 
+                        class="flex justify-between bg-white p-2 mb-2 rounded"
+                    >
+                        {{ item }}
+                        <button 
+                            @click="removeItem(index)" 
+                            class="text-red-500"
+                        >
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Panel Administracyjny -->
+            <div v-if="isAdmin" class="admin-panel">
+                <h2 class="text-2xl font-bold mb-4">
+                    {{ translations[currentLanguage].adminPanel }}
+                </h2>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded shadow">
+                        <h3 class="font-bold">Użytkownicy</h3>
+                        <ul>
+                            <li v-for="user in users" :key="user.id">
+                                {{ user.email }}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-4 rounded shadow">
+                        <h3 class="font-bold">Statystyki</h3>
+                        <p>Całkowita liczba użytkowników: {{ users.length }}</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -135,68 +178,106 @@
         data() {
             return {
                 isLoggedIn: false,
+                isAdmin: false,
                 email: '',
                 password: '',
                 currentLanguage: 'pl',
                 newItem: '',
-                shoppingItems: [],
-                seasonalDays: [
-                    { date: '2024-03-01', event: 'Wiosenne sadzenie' },
-                    { date: '2024-03-15', event: 'Zbiory warzyw' }
+                shoppingList: [],
+                users: [
+                    { id: 1, email: 'admin@example.com' },
+                    { id: 2, email: 'user@example.com' }
+                ],
+                aiGeneratedRecipes: [
+                    { 
+                        id: 1, 
+                        name: 'Sezonowa Sałatka', 
+                        description: 'Świeże warzywa z lokalnych upraw' 
+                    }
+                ],
+                seasonalEvents: [
+                    { 
+                        date: '15.03.2024', 
+                        description: 'Początek sadzenia warzyw' 
+                    },
+                    { 
+                        date: '01.04.2024', 
+                        description: 'Przygotowanie grządek' 
+                    }
                 ],
                 translations: {
                     pl: {
                         login: 'Zaloguj się',
                         email: 'E-mail',
                         password: 'Hasło',
+                        aiRecipes: 'Przepisy AI',
+                        regenerate: 'Wygeneruj ponownie',
                         seasonalCalendar: 'Kalendarz Sezonowy',
                         shoppingList: 'Lista Zakupów',
                         addItem: 'Dodaj produkt',
-                        add: 'Dodaj'
+                        add: 'Dodaj',
+                        adminPanel: 'Panel Administracyjny'
                     },
                     en: {
                         login: 'Log In',
                         email: 'Email',
                         password: 'Password',
+                        aiRecipes: 'AI Recipes',
+                        regenerate: 'Regenerate',
                         seasonalCalendar: 'Seasonal Calendar',
                         shoppingList: 'Shopping List',
                         addItem: 'Add product',
-                        add: 'Add'
+                        add: 'Add',
+                        adminPanel: 'Admin Panel'
                     }
                 }
             }
         },
         methods: {
             login() {
-                if (this.email && this.password) {
+                // Prosta symulacja logowania
+                if (this.email === 'admin@example.com' && this.password === 'admin') {
                     this.isLoggedIn = true;
-                    alert('Zalogowano pomyślnie!');
+                    this.isAdmin = true;
+                } else if (this.email && this.password) {
+                    this.isLoggedIn = true;
                 } else {
                     alert('Nieprawidłowe dane logowania');
                 }
             },
             googleLogin() {
-                // Symulacja logowania Google
+                // Symulacja logowania przez Google
                 this.isLoggedIn = true;
-                alert('Zalogowano przez Google');
             },
             logout() {
                 this.isLoggedIn = false;
+                this.isAdmin = false;
+                this.email = '';
+                this.password = '';
             },
             toggleLanguage() {
                 this.currentLanguage = this.currentLanguage === 'pl' ? 'en' : 'pl';
             },
             addItem() {
                 if (this.newItem.trim()) {
-                    this.shoppingItems.push({
-                        id: Date.now(),
-                        name: this.newItem
-                    });
+                    this.shoppingList.push(this.newItem.trim());
                     this.newItem = '';
                 }
             },
-            removeItem(id) {
-                this.shoppingItems = this.shoppingItems.filter(item => item.id !== id);
+            removeItem(index) {
+                this.shoppingList.splice(index, 1);
+            },
+            generateRecipe() {
+                // Prosta symulacja generowania przepisu
+                this.aiGeneratedRecipes.push({
+                    id: Date.now(),
+                    name: 'Nowy Przepis AI',
+                    description: 'Świeży, wygenerowany przepis'
+                });
+            },
+            exportToPDF() {
+                // Prosta funkcja eksportu do PDF (wymaga dodatkowej biblioteki)
+                console.log('Eksport do PDF');
             }
         }
     }).mount('#app');
