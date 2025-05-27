@@ -1,76 +1,1915 @@
-<!-- Auto-repair and Manual Repair Tools Section -->
-<section id="repair-tools" class="my-6 p-4 bg-white rounded shadow">
-  <h2 class="text-2xl font-bold mb-4">Auto & Manual Repair Systems</h2>
-  <p>This system continuously monitors and repairs errors automatically. Use the manual repair tools below to fix issues manually if needed.</p>
-  <button onclick="triggerAutoRepair()" class="mt-2 px-4 py-2 bg-green-500 text-white rounded"><i class="fas fa-cog"></i> Auto-Repair</button>
-  <button onclick="openManualRepairModal()" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded"><i class="fas fa-wrench"></i> Manual Repair</button>
-</section>
 
-<!-- API Detection Section -->
-<section id="api-detection" class="my-6 p-4 bg-white rounded shadow">
-  <h2 class="text-2xl font-bold mb-4">API Detection</h2>
-  <p>This module will automatically detect and integrate support for various API providers.</p>
-  <ul id="api-list" class="list-disc pl-6">
-    <li>OpenAI</li>
-    <li>Claude</li>
-    <li>Gemini</li>
-    <li>Llama</li>
-    <li>Cohere</li>
-    <li>Mistral</li>
-  </ul>
-</section>
+<!DOCTYPE html>
+<html lang="pl" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aplikacja mobilna do zarządzania sezonowością według harmonii chińskiej">
+    <title>Sezonowość według harmonii chińskiej</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#059669">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Sezonowość">
+    
+    <!-- Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlNlem9ub3dvxZvEhyB3ZWRsVWcgaGFybW9uaWkgY2hpxYTFtGtpZWoiLAogICJzaG9ydF9uYW1lIjogIlNlem9ub3dvxZvEhyIsCiAgInN0YXJ0X3VybCI6ICIvIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjZmZmZmZmIiwKICAidGhlbWVfY29sb3IiOiAiIzA1OTY2OSIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjNhV1IwYUQwaU1USTRJaUJvWldsbmFIUTlJakV5T0NJZ2RtbGxkMEp2ZUQwaU1DQXdJREV5T0NBeU9DSWdabWxzYkQwaUl6QTFPVFkyT1NJK1BHTnBjbU5zWlNCamVEMGlOalFpSUdONVBTSTJOQ0lnY2owaU16SWlMejQ4TDNOMlp6ND0iLAogICAgICAic2l6ZXMiOiAiMTI4eDEyOCIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9CiAgXQp9">
+    
+    <style>
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .slide-up { animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .pulse-green { animation: pulse-green 2s infinite; }
+        @keyframes pulse-green { 0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); } 50% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); } }
+        .gradient-bg { background: linear-gradient(135deg, #059669 0%, #065f46 100%); }
+        .glass { backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.1); }
+        .scroll-hidden { scrollbar-width: none; -ms-overflow-style: none; }
+        .scroll-hidden::-webkit-scrollbar { display: none; }
+    </style>
+</head>
 
-<!-- AI Recipe Generator Section -->
-<section id="ai-recipe" class="my-6 p-4 bg-white rounded shadow">
-  <h2 class="text-2xl font-bold mb-4">AI Recipe Generator</h2>
-  <textarea id="recipe-input" class="w-full border rounded p-2" placeholder="Enter ingredients or dietary preferences..."></textarea>
-  <button onclick="generateRecipe()" class="mt-2 px-4 py-2 bg-purple-500 text-white rounded"><i class="fas fa-utensils"></i> Generate Recipe</button>
-  <div id="recipe-output" class="mt-4 p-2 bg-gray-100 rounded"></div>
-</section>
+<body class="h-full bg-gray-50 font-sans">
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="fixed inset-0 bg-white z-50 flex items-center justify-center">
+        <div class="text-center">
+            <div class="w-16 h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <h2 class="text-xl font-semibold text-gray-800" data-translate="loading">Ładowanie...</h2>
+        </div>
+    </div>
 
-<!-- Shopping List Section -->
-<section id="shopping-list" class="my-6 p-4 bg-white rounded shadow">
-  <h2 class="text-2xl font-bold mb-4">Shopping Lists</h2>
-  <input id="shopping-input" class="w-full border rounded p-2" placeholder="Enter shopping item..." />
-  <button onclick="addShoppingItem()" class="mt-2 px-4 py-2 bg-indigo-500 text-white rounded"><i class="fas fa-cart-plus"></i> Add Item</button>
-  <ul id="shopping-items" class="mt-4 list-disc pl-6"></ul>
-</section>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="hidden min-h-screen gradient-bg flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 fade-in">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-leaf text-white text-2xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800" data-translate="app_title">Sezonowość według harmonii chińskiej</h1>
+                <p class="text-gray-600 mt-2" data-translate="app_subtitle">Odkryj mądrość tradycyjnej medycyny</p>
+            </div>
 
-<!-- Seasonal Calendar Section -->
-<section id="seasonal-calendar" class="my-6 p-4 bg-white rounded shadow">
-  <h2 class="text-2xl font-bold mb-4">Seasonal Calendar</h2>
-  <p>View seasonal changes and corresponding Chinese harmony tips.</p>
-  <div id="calendar-placeholder" class="mt-2 p-4 bg-gray-50 border rounded">Calendar component placeholder</div>
-</section>
+            <!-- Language Switcher -->
+            <div class="flex justify-center mb-6">
+                <div class="bg-gray-100 rounded-full p-1 flex">
+                    <button onclick="switchLanguage('pl')" class="px-4 py-2 rounded-full transition-all duration-200" id="pl-btn">PL</button>
+                    <button onclick="switchLanguage('en')" class="px-4 py-2 rounded-full transition-all duration-200" id="en-btn">EN</button>
+                </div>
+            </div>
 
-<!-- Statistics & Chart Section (Using Chart.js) -->
-<section id="statistics" class="my-6 p-4 bg-white rounded shadow">
-  <h2 class="text-2xl font-bold mb-4">Statistics</h2>
-  <canvas id="statsChart" width="400" height="200"></canvas>
-</section>
+            <!-- Login Form -->
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2" data-translate="email">Email</label>
+                    <input type="email" id="email" required 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                           placeholder="admin@sezonowosc.pl">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2" data-translate="password">Hasło</label>
+                    <input type="password" id="password" required 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                           placeholder="admin123">
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center">
+                        <input type="checkbox" class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500">
+                        <span class="ml-2 text-sm text-gray-600" data-translate="remember_me">Zapamiętaj mnie</span>
+                    </label>
+                    <a href="#" class="text-sm text-green-600 hover:text-green-700" data-translate="forgot_password">Zapomniałeś hasła?</a>
+                </div>
 
-<!-- Login System Section -->
-<section id="login-system" class="my-6 p-4 bg-white rounded shadow">
-  <h2 class="text-2xl font-bold mb-4">Login System</h2>
-  <p>Login with your account.</p>
-  <button onclick="loginWith('google')" class="px-4 py-2 bg-red-500 text-white rounded"><i class="fab fa-google"></i> Google</button>
-  <button onclick="loginWith('apple')" class="px-4 py-2 bg-gray-800 text-white rounded"><i class="fab fa-apple"></i> Apple</button>
-</section>
+                <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition-all duration-200 transform hover:scale-105">
+                    <span data-translate="login">Zaloguj się</span>
+                </button>
+            </form>
 
-<!-- Stripe Payment Integration Section -->
-<section id="payments" class="my-6 p-4 bg-white rounded shadow">
-  <h2 class="text-2xl font-bold mb-4">Stripe Payments</h2>
-  <p>Secure payment integration through Stripe.</p>
-  <button onclick="processPayment()" class="mt-2 px-4 py-2 bg-yellow-500 text-white rounded"><i class="fas fa-credit-card"></i> Pay Now</button>
-</section>
+            <!-- Social Login -->
+            <div class="mt-6">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500" data-translate="or">lub</span>
+                    </div>
+                </div>
 
-<!-- Admin Panel Section -->
-<section id="admin-panel" class="my-6 p-4 bg-white rounded shadow">
-  <h2 class="text-2xl font-bold mb-4">Admin Panel</h2>
-  <p>Manage the application with advanced tools and settings.</p>
-  <div id="admin-controls">
-    <!-- Insert admin functionalities -->
-    <button onclick="adminAction('viewUsers')" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded"><i class="fas fa-users"></i> View Users</button>
-    <button onclick="adminAction('manageData')" class="mt-2 px-4 py-2 bg-green-600 text-white rounded"><i class="fas fa-database"></i> Manage Data</button>
-  </div>
-</section>
+                <div class="mt-6 space-y-3">
+                    <button onclick="loginWithGoogle()" class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-all">
+                        <svg class="w-5 h-5 mr-3" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        <span data-translate="login_google">Zaloguj przez Google</span>
+                    </button>
+                    
+                    <button onclick="loginWithApple()" class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-all">
+                        <i class="fab fa-apple text-xl mr-3"></i>
+                        <span data-translate="login_apple">Zaloguj przez Apple</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Register Link -->
+            <div class="mt-6 text-center">
+                <p class="text-gray-600">
+                    <span data-translate="no_account">Nie masz konta?</span>
+                    <a href="#" onclick="showRegisterForm()" class="text-green-600 hover:text-green-700 font-semibold ml-1" data-translate="register">Zarejestruj się</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="hidden min-h-screen bg-gray-50">
+        <!-- Top Navigation -->
+        <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+            <div class="px-4 py-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-leaf text-white text-sm"></i>
+                        </div>
+                        <h1 class="text-lg font-semibold text-gray-800" data-translate="app_name">Sezonowość</h1>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3">
+                        <!-- Language Toggle -->
+                        <button onclick="toggleLanguage()" class="text-gray-600 hover:text-green-600 transition-colors">
+                            <i class="fas fa-globe text-lg"></i>
+                        </button>
+                        
+                        <!-- Notifications -->
+                        <button onclick="showNotifications()" class="relative text-gray-600 hover:text-green-600 transition-colors">
+                            <i class="fas fa-bell text-lg"></i>
+                            <span id="notificationBadge" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden">3</span>
+                        </button>
+                        
+                        <!-- User Menu -->
+                        <div class="relative">
+                            <button onclick="toggleUserMenu()" class="flex items-center space-x-2 text-gray-600 hover:text-green-600 transition-colors">
+                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user text-green-600 text-sm"></i>
+                                </div>
+                            </button>
+                            
+                            <!-- User Dropdown -->
+                            <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
+                                <a href="#" onclick="showProfile()" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
+                                    <i class="fas fa-user-circle mr-2"></i>
+                                    <span data-translate="profile">Profil</span>
+                                </a>
+                                <a href="#" onclick="showSettings()" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors">
+                                    <i class="fas fa-cog mr-2"></i>
+                                    <span data-translate="settings">Ustawienia</span>
+                                </a>
+                                <a href="#" onclick="showAdminPanel()" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors" id="adminMenuLink">
+                                    <i class="fas fa-tools mr-2"></i>
+                                    <span data-translate="admin_panel">Panel Admin</span>
+                                </a>
+                                <hr class="my-2">
+                                <a href="#" onclick="logout()" class="block px-4 py-2 text-red-600 hover:bg-red-50 transition-colors">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>
+                                    <span data-translate="logout">Wyloguj</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="pb-20">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="p-4 space-y-6">
+                <!-- Welcome Card -->
+                <div class="bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-6 text-white">
+                    <h2 class="text-xl font-bold mb-2" data-translate="welcome">Witaj w harmonii sezonów</h2>
+                    <p class="opacity-90" data-translate="welcome_desc">Odkryj mądrość tradycyjnej chińskiej harmonii</p>
+                    <div class="mt-4 flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span id="currentSeason" data-translate="spring">Wiosna</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-thermometer-half"></i>
+                            <span data-translate="yang_energy">Energia Yang</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600 text-sm" data-translate="ai_queries">Zapytania AI</p>
+                                <p class="text-2xl font-bold text-gray-800" id="aiQueriesCount">7/10</p>
+                            </div>
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-robot text-blue-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600 text-sm" data-translate="saved_recipes">Zapisane przepisy</p>
+                                <p class="text-2xl font-bold text-gray-800" id="savedRecipesCount">12</p>
+                            </div>
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-bookmark text-green-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seasonal Calendar -->
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4" data-translate="seasonal_calendar">Kalendarz sezonowości</h3>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="selectSeason('spring')" class="season-btn p-4 rounded-xl border-2 border-green-200 bg-green-50 text-left transition-all hover:border-green-400 hover:shadow-md active">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-seedling text-green-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800" data-translate="spring">Wiosna</h4>
+                                    <p class="text-sm text-gray-600" data-translate="spring_desc">Odnowa • Yang</p>
+                                </div>
+                            </div>
+                        </button>
+                        
+                        <button onclick="selectSeason('summer')" class="season-btn p-4 rounded-xl border-2 border-yellow-200 bg-yellow-50 text-left transition-all hover:border-yellow-400 hover:shadow-md">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-sun text-yellow-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800" data-translate="summer">Lato</h4>
+                                    <p class="text-sm text-gray-600" data-translate="summer_desc">Aktywność • Yang</p>
+                                </div>
+                            </div>
+                        </button>
+                        
+                        <button onclick="selectSeason('autumn')" class="season-btn p-4 rounded-xl border-2 border-orange-200 bg-orange-50 text-left transition-all hover:border-orange-400 hover:shadow-md">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-leaf text-orange-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800" data-translate="autumn">Jesień</h4>
+                                    <p class="text-sm text-gray-600" data-translate="autumn_desc">Zbierane • Yin</p>
+                                </div>
+                            </div>
+                        </button>
+                        
+                        <button onclick="selectSeason('winter')" class="season-btn p-4 rounded-xl border-2 border-blue-200 bg-blue-50 text-left transition-all hover:border-blue-400 hover:shadow-md">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-snowflake text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800" data-translate="winter">Zima</h4>
+                                    <p class="text-sm text-gray-600" data-translate="winter_desc">Kontemplacja • Yin</p>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Today's Recommendations -->
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4" data-translate="todays_recommendations">Dzisiejsze zalecenia</h3>
+                    <div id="seasonalRecommendations" class="space-y-3">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
+                                <i class="fas fa-utensils text-green-600 text-xs"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-800 font-medium" data-translate="food_recommendation">Jedz lekko i świeżo</p>
+                                <p class="text-gray-600 text-sm" data-translate="food_recommendation_desc">Skoncentruj się na zielonych warzywach</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-3">
+                            <div class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mt-0.5">
+                                <i class="fas fa-running text-blue-600 text-xs"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-800 font-medium" data-translate="activity_recommendation">Ćwicz rano na świeżym powietrzu</p>
+                                <p class="text-gray-600 text-sm" data-translate="activity_recommendation_desc">Wykorzystaj rosnącą energię Yang</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Recipe Generator Section -->
+            <section id="aiRecipes" class="hidden p-4 space-y-6">
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800" data-translate="ai_recipe_generator">Generator przepisów AI</h3>
+                        <div class="flex items-center space-x-2 text-sm text-gray-600">
+                            <i class="fas fa-bolt text-yellow-500"></i>
+                            <span data-translate="queries_left">Zapytania: </span>
+                            <span id="aiQueriesLeft" class="font-semibold">7/10</span>
+                        </div>
+                    </div>
+
+                    <!-- Recipe Generation Form -->
+                    <form id="recipeForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2" data-translate="ingredients">Składniki (opcjonalnie)</label>
+                            <textarea id="ingredients" rows="3" 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                                    placeholder="np. kurczak, brokuły, imbir, ryż..."></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2" data-translate="dietary_preferences">Preferencje dietetyczne</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <label class="flex items-center space-x-2">
+                                    <input type="checkbox" value="vegan" class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500">
+                                    <span class="text-sm" data-translate="vegan">Wegańskie</span>
+                                </label>
+                                <label class="flex items-center space-x-2">
+                                    <input type="checkbox" value="vegetarian" class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500">
+                                    <span class="text-sm" data-translate="vegetarian">Wegetariańskie</span>
+                                </label>
+                                <label class="flex items-center space-x-2">
+                                    <input type="checkbox" value="gluten-free" class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500">
+                                    <span class="text-sm" data-translate="gluten_free">Bezglutenowe</span>
+                                </label>
+                                <label class="flex items-center space-x-2">
+                                    <input type="checkbox" value="low-carb" class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500">
+                                    <span class="text-sm" data-translate="low_carb">Niskowęglowodanowe</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2" data-translate="season_focus">Sezon</label>
+                            <select id="seasonFocus" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                <option value="current" data-translate="current_season">Aktualny sezon</option>
+                                <option value="spring" data-translate="spring">Wiosna</option>
+                                <option value="summer" data-translate="summer">Lato</option>
+                                <option value="autumn" data-translate="autumn">Jesień</option>
+                                <option value="winter" data-translate="winter">Zima</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" id="generateBtn" class="w-full bg-green-600 text-white py-4 rounded-xl font-semibold hover:bg-green-700 transition-all duration-200 transform hover:scale-105 flex items-center justify-center space-x-2">
+                            <i class="fas fa-magic"></i>
+                            <span data-translate="generate_recipe">Wygeneruj przepis</span>
+                        </button>
+                    </form>
+
+                    <!-- Generated Recipe -->
+                    <div id="generatedRecipe" class="hidden mt-6 p-4 bg-gray-50 rounded-xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="font-semibold text-gray-800" data-translate="generated_recipe">Wygenerowany przepis</h4>
+                            <button onclick="saveRecipe()" class="text-green-600 hover:text-green-700 transition-colors">
+                                <i class="fas fa-bookmark mr-1"></i>
+                                <span data-translate="save">Zapisz</span>
+                            </button>
+                        </div>
+                        <div id="recipeContent" class="text-gray-700 space-y-2"></div>
+                    </div>
+                </div>
+
+                <!-- Saved Recipes -->
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4" data-translate="saved_recipes">Zapisane przepisy</h3>
+                    <div id="savedRecipes" class="space-y-3">
+                        <!-- Saved recipes will be populated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Shopping List Section -->
+            <section id="shoppingList" class="hidden p-4 space-y-6">
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800" data-translate="shopping_list">Lista zakupów</h3>
+                        <button onclick="exportShoppingList()" class="text-green-600 hover:text-green-700 transition-colors">
+                            <i class="fas fa-download mr-1"></i>
+                            <span data-translate="export">Eksportuj</span>
+                        </button>
+                    </div>
+
+                    <!-- Add Item Form -->
+                    <form id="addItemForm" class="flex space-x-2 mb-4">
+                        <input type="text" id="newItem" 
+                               class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                               placeholder="Dodaj produkt...">
+                        <button type="submit" class="px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </form>
+
+                    <!-- Shopping Items -->
+                    <div id="shoppingItems" class="space-y-2">
+                        <!-- Shopping items will be populated here -->
+                    </div>
+
+                    <!-- Quick Add Categories -->
+                    <div class="mt-6">
+                        <h4 class="font-medium text-gray-800 mb-3" data-translate="quick_add">Szybkie dodawanie</h4>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="addCategoryItems('vegetables')" class="p-3 bg-green-50 border border-green-200 rounded-xl text-left hover:bg-green-100 transition-colors">
+                                <i class="fas fa-carrot text-green-600 mr-2"></i>
+                                <span data-translate="vegetables">Warzywa</span>
+                            </button>
+                            <button onclick="addCategoryItems('fruits')" class="p-3 bg-red-50 border border-red-200 rounded-xl text-left hover:bg-red-100 transition-colors">
+                                <i class="fas fa-apple-alt text-red-600 mr-2"></i>
+                                <span data-translate="fruits">Owoce</span>
+                            </button>
+                            <button onclick="addCategoryItems('spices')" class="p-3 bg-yellow-50 border border-yellow-200 rounded-xl text-left hover:bg-yellow-100 transition-colors">
+                                <i class="fas fa-pepper-hot text-yellow-600 mr-2"></i>
+                                <span data-translate="spices">Przyprawy</span>
+                            </button>
+                            <button onclick="addCategoryItems('herbs')" class="p-3 bg-purple-50 border border-purple-200 rounded-xl text-left hover:bg-purple-100 transition-colors">
+                                <i class="fas fa-leaf text-purple-600 mr-2"></i>
+                                <span data-translate="herbs">Zioła</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="hidden p-4 space-y-6">
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-6" data-translate="settings">Ustawienia</h3>
+                    
+                    <!-- Account Settings -->
+                    <div class="space-y-4 mb-6">
+                        <h4 class="font-medium text-gray-700" data-translate="account_settings">Ustawienia konta</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600" data-translate="notifications">Powiadomienia</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600" data-translate="dark_mode">Tryb ciemny</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Subscription -->
+                    <div class="space-y-4 mb-6">
+                        <h4 class="font-medium text-gray-700" data-translate="subscription">Subskrypcja</h4>
+                        <div class="p-4 bg-green-50 border border-green-200 rounded-xl">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium text-gray-800" data-translate="current_plan">Plan darmowy</p>
+                                    <p class="text-sm text-gray-600" data-translate="queries_per_month">10 zapytań miesięcznie</p>
+                                </div>
+                                <button onclick="showUpgradeModal()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                                    <span data-translate="upgrade">Ulepsz</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Management -->
+                    <div class="space-y-4">
+                        <h4 class="font-medium text-gray-700" data-translate="data_management">Zarządzanie danymi</h4>
+                        <div class="space-y-2">
+                            <button onclick="exportData()" class="w-full p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors">
+                                <i class="fas fa-download text-gray-600 mr-3"></i>
+                                <span data-translate="export_data">Eksportuj dane</span>
+                            </button>
+                            <button onclick="clearData()" class="w-full p-3 text-left bg-red-50 hover:bg-red-100 rounded-xl transition-colors text-red-600">
+                                <i class="fas fa-trash text-red-600 mr-3"></i>
+                                <span data-translate="clear_data">Wyczyść dane</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Admin Panel Section -->
+            <section id="adminPanel" class="hidden p-4 space-y-6">
+                <!-- System Status -->
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4" data-translate="system_status">Status systemu</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-4 bg-green-50 border border-green-200 rounded-xl">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-green-500 rounded-full pulse-green"></div>
+                                <span class="text-sm font-medium text-gray-700" data-translate="api_status">Status API</span>
+                            </div>
+                            <p class="text-lg font-bold text-green-600 mt-1" id="apiStatus">Online</p>
+                        </div>
+                        <div class="p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                <span class="text-sm font-medium text-gray-700" data-translate="users_online">Użytkownicy online</span>
+                            </div>
+                            <p class="text-lg font-bold text-blue-600 mt-1" id="usersOnline">47</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API Configuration -->
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4" data-translate="api_configuration">Konfiguracja API</h3>
+                    
+                    <form id="apiConfigForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2" data-translate="ai_api_key">Klucz AI API</label>
+                            <div class="relative">
+                                <input type="password" id="apiKey" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent pr-20"
+                                       placeholder="sk-...">
+                                <div class="absolute right-3 top-3 flex items-center space-x-2">
+                                    <button type="button" onclick="toggleApiKeyVisibility()" class="text-gray-400 hover:text-gray-600">
+                                        <i class="fas fa-eye" id="apiKeyToggle"></i>
+                                    </button>
+                                    <div id="apiDetection" class="hidden">
+                                        <i class="fas fa-check-circle text-green-500" title="API wykryto"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="detectedProvider" class="hidden mt-2 p-2 bg-green-50 border border-green-200 rounded-lg">
+                                <p class="text-sm text-green-700">
+                                    <i class="fas fa-robot mr-1"></i>
+                                    <span data-translate="detected">Wykryto:</span>
+                                    <span id="providerName" class="font-semibold"></span>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2" data-translate="stripe_public_key">Klucz publiczny Stripe</label>
+                                <input type="text" id="stripePublicKey" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                       placeholder="pk_...">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2" data-translate="stripe_secret_key">Klucz prywatny Stripe</label>
+                                <input type="password" id="stripeSecretKey" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                       placeholder="sk_...">
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition-colors">
+                            <span data-translate="save_configuration">Zapisz konfigurację</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Auto-Repair System -->
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4" data-translate="auto_repair_system">System auto-naprawy</h3>
+                    
+                    <!-- Health Score -->
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700" data-translate="system_health">Zdrowie systemu</span>
+                            <span class="text-sm font-bold text-green-600" id="healthScore">96/100</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                            <div class="bg-green-600 h-3 rounded-full" style="width: 96%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Auto-Repair Settings -->
+                    <div class="space-y-4 mb-6">
+                        <h4 class="font-medium text-gray-700" data-translate="auto_repair_rules">Zasady auto-naprawy</h4>
+                        <div class="space-y-3">
+                            <label class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600" data-translate="auto_api_switch">Automatyczne przełączanie API</span>
+                                <input type="checkbox" class="toggle-switch" checked>
+                            </label>
+                            <label class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600" data-translate="auto_cache_clear">Automatyczne czyszczenie cache</span>
+                                <input type="checkbox" class="toggle-switch" checked>
+                            </label>
+                            <label class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600" data-translate="auto_session_cleanup">Automatyczne czyszczenie sesji</span>
+                                <input type="checkbox" class="toggle-switch" checked>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Manual Repair Tools -->
+                    <div class="space-y-4">
+                        <h4 class="font-medium text-gray-700" data-translate="manual_repair_tools">Narzędzia manualnej naprawy</h4>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="clearCache()" class="p-3 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl text-left transition-colors">
+                                <i class="fas fa-broom text-blue-600 mb-2"></i>
+                                <p class="text-sm font-medium text-gray-800" data-translate="clear_cache">Wyczyść cache</p>
+                            </button>
+                            <button onclick="resetSessions()" class="p-3 bg-yellow-50 hover:bg-yellow-100 border border-yellow-200 rounded-xl text-left transition-colors">
+                                <i class="fas fa-user-times text-yellow-600 mb-2"></i>
+                                <p class="text-sm font-medium text-gray-800" data-translate="reset_sessions">Resetuj sesje</p>
+                            </button>
+                            <button onclick="restartApi()" class="p-3 bg-green-50 hover:bg-green-100 border border-green-200 rounded-xl text-left transition-colors">
+                                <i class="fas fa-redo text-green-600 mb-2"></i>
+                                <p class="text-sm font-medium text-gray-800" data-translate="restart_api">Restart API</p>
+                            </button>
+                            <button onclick="emergencyReset()" class="p-3 bg-red-50 hover:bg-red-100 border border-red-200 rounded-xl text-left transition-colors">
+                                <i class="fas fa-exclamation-triangle text-red-600 mb-2"></i>
+                                <p class="text-sm font-medium text-gray-800" data-translate="emergency_reset">Reset awaryjny</p>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Repair History -->
+                    <div class="mt-6">
+                        <h4 class="font-medium text-gray-700 mb-3" data-translate="repair_history">Historia napraw</h4>
+                        <div class="space-y-2 max-h-40 overflow-y-auto scroll-hidden">
+                            <div class="text-sm p-2 bg-gray-50 rounded">
+                                <span class="text-gray-500">14:30</span> - Auto-fixed API timeout
+                            </div>
+                            <div class="text-sm p-2 bg-gray-50 rounded">
+                                <span class="text-gray-500">13:45</span> - Cleared corrupted cache
+                            </div>
+                            <div class="text-sm p-2 bg-gray-50 rounded">
+                                <span class="text-gray-500">12:20</span> - Restarted slow API connection
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Chart -->
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4" data-translate="usage_statistics">Statystyki użytkowania</h3>
+                    <canvas id="statsChart" width="400" height="200"></canvas>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2 z-30">
+            <div class="flex items-center justify-around">
+                <button onclick="showSection('dashboard')" class="nav-btn flex flex-col items-center space-y-1 py-2 px-3 rounded-xl transition-all active">
+                    <i class="fas fa-home text-lg"></i>
+                    <span class="text-xs" data-translate="home">Strona główna</span>
+                </button>
+                <button onclick="showSection('aiRecipes')" class="nav-btn flex flex-col items-center space-y-1 py-2 px-3 rounded-xl transition-all">
+                    <i class="fas fa-robot text-lg"></i>
+                    <span class="text-xs" data-translate="ai_recipes">AI Przepisy</span>
+                </button>
+                <button onclick="showSection('shoppingList')" class="nav-btn flex flex-col items-center space-y-1 py-2 px-3 rounded-xl transition-all">
+                    <i class="fas fa-shopping-cart text-lg"></i>
+                    <span class="text-xs" data-translate="shopping">Lista</span>
+                </button>
+                <button onclick="showSection('settings')" class="nav-btn flex flex-col items-center space-y-1 py-2 px-3 rounded-xl transition-all">
+                    <i class="fas fa-cog text-lg"></i>
+                    <span class="text-xs" data-translate="settings">Ustawienia</span>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Modals -->
+    <!-- Upgrade Modal -->
+    <div id="upgradeModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 slide-up">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-crown text-yellow-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800" data-translate="upgrade_to_premium">Przejdź na Premium</h3>
+                <p class="text-gray-600 mt-2" data-translate="premium_benefits">Odblokuj wszystkie funkcje</p>
+            </div>
+
+            <div class="space-y-4 mb-6">
+                <div class="p-4 border border-gray-200 rounded-xl">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-semibold text-gray-800" data-translate="premium_plan">Plan Premium</h4>
+                            <p class="text-gray-600 text-sm" data-translate="monthly">miesięcznie</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-2xl font-bold text-gray-800">29 zł</p>
+                        </div>
+                    </div>
+                    <ul class="mt-3 space-y-1 text-sm text-gray-600">
+                        <li><i class="fas fa-check text-green-600 mr-2"></i><span data-translate="unlimited_ai">Nieograniczone zapytania AI</span></li>
+                        <li><i class="fas fa-check text-green-600 mr-2"></i><span data-translate="advanced_features">Zaawansowane funkcje</span></li>
+                        <li><i class="fas fa-check text-green-600 mr-2"></i><span data-translate="priority_support">Priorytetowe wsparcie</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flex space-x-3">
+                <button onclick="closeUpgradeModal()" class="flex-1 px-4 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors">
+                    <span data-translate="cancel">Anuluj</span>
+                </button>
+                <button onclick="subscribeToPremium()" class="flex-1 px-4 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors">
+                    <span data-translate="subscribe">Subskrybuj</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Modal -->
+    <div id="notificationModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 slide-up">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4" data-translate="notifications">Powiadomienia</h3>
+            <div class="space-y-3">
+                <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl">
+                    <p class="text-sm font-medium text-gray-800" data-translate="new_season">Nowy sezon rozpoczął się!</p>
+                    <p class="text-xs text-gray-600" data-translate="spring_recommendations">Sprawdź zalecenia wiosenne</p>
+                </div>
+                <div class="p-3 bg-green-50 border border-green-200 rounded-xl">
+                    <p class="text-sm font-medium text-gray-800" data-translate="ai_limit_reminder">Zostało Ci 3 zapytania AI</p>
+                    <p class="text-xs text-gray-600" data-translate="upgrade_suggestion">Rozważ przejście na Premium</p>
+                </div>
+            </div>
+            <button onclick="closeNotificationModal()" class="w-full mt-4 px-4 py-3 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors">
+                <span data-translate="close">Zamknij</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Global Variables
+        let currentUser = null;
+        let currentLanguage = 'pl';
+        let currentSection = 'dashboard';
+        let aiQueriesUsed = 7;
+        let savedRecipes = [];
+        let shoppingItems = [];
+        let stripe = null;
+
+        // Translation Dictionary
+        const translations = {
+            pl: {
+                loading: "Ładowanie...",
+                app_title: "Sezonowość według harmonii chińskiej",
+                app_subtitle: "Odkryj mądrość tradycyjnej medycyny",
+                email: "Email",
+                password: "Hasło",
+                remember_me: "Zapamiętaj mnie",
+                forgot_password: "Zapomniałeś hasła?",
+                login: "Zaloguj się",
+                or: "lub",
+                login_google: "Zaloguj przez Google",
+                login_apple: "Zaloguj przez Apple",
+                no_account: "Nie masz konta?",
+                register: "Zarejestruj się",
+                app_name: "Sezonowość",
+                profile: "Profil",
+                settings: "Ustawienia",
+                admin_panel: "Panel Admin",
+                logout: "Wyloguj",
+                welcome: "Witaj w harmonii sezonów",
+                welcome_desc: "Odkryj mądrość tradycyjnej chińskiej harmonii",
+                spring: "Wiosna",
+                yang_energy: "Energia Yang",
+                ai_queries: "Zapytania AI",
+                saved_recipes: "Zapisane przepisy",
+                seasonal_calendar: "Kalendarz sezonowości",
+                summer: "Lato",
+                autumn: "Jesień",
+                winter: "Zima",
+                spring_desc: "Odnowa • Yang",
+                summer_desc: "Aktywność • Yang",
+                autumn_desc: "Zbierane • Yin",
+                winter_desc: "Kontemplacja • Yin",
+                todays_recommendations: "Dzisiejsze zalecenia",
+                food_recommendation: "Jedz lekko i świeżo",
+                food_recommendation_desc: "Skoncentruj się na zielonych warzywach",
+                activity_recommendation: "Ćwicz rano na świeżym powietrzu",
+                activity_recommendation_desc: "Wykorzystaj rosnącą energię Yang",
+                ai_recipe_generator: "Generator przepisów AI",
+                queries_left: "Zapytania:",
+                ingredients: "Składniki (opcjonalnie)",
+                dietary_preferences: "Preferencje dietetyczne",
+                vegan: "Wegańskie",
+                vegetarian: "Wegetariańskie",
+                gluten_free: "Bezglutenowe",
+                low_carb: "Niskowęglowodanowe",
+                season_focus: "Sezon",
+                current_season: "Aktualny sezon",
+                generate_recipe: "Wygeneruj przepis",
+                generated_recipe: "Wygenerowany przepis",
+                save: "Zapisz",
+                shopping_list: "Lista zakupów",
+                export: "Eksportuj",
+                quick_add: "Szybkie dodawanie",
+                vegetables: "Warzywa",
+                fruits: "Owoce",
+                spices: "Przyprawy",
+                herbs: "Zioła",
+                account_settings: "Ustawienia konta",
+                notifications: "Powiadomienia",
+                dark_mode: "Tryb ciemny",
+                subscription: "Subskrypcja",
+                current_plan: "Plan darmowy",
+                queries_per_month: "10 zapytań miesięcznie",
+                upgrade: "Ulepsz",
+                data_management: "Zarządzanie danymi",
+                export_data: "Eksportuj dane",
+                clear_data: "Wyczyść dane",
+                system_status: "Status systemu",
+                api_status: "Status API",
+                users_online: "Użytkownicy online",
+                api_configuration: "Konfiguracja API",
+                ai_api_key: "Klucz AI API",
+                stripe_public_key: "Klucz publiczny Stripe",
+                stripe_secret_key: "Klucz prywatny Stripe",
+                save_configuration: "Zapisz konfigurację",
+                auto_repair_system: "System auto-naprawy",
+                system_health: "Zdrowie systemu",
+                auto_repair_rules: "Zasady auto-naprawy",
+                auto_api_switch: "Automatyczne przełączanie API",
+                auto_cache_clear: "Automatyczne czyszczenie cache",
+                auto_session_cleanup: "Automatyczne czyszczenie sesji",
+                manual_repair_tools: "Narzędzia manualnej naprawy",
+                clear_cache: "Wyczyść cache",
+                reset_sessions: "Resetuj sesje",
+                restart_api: "Restart API",
+                emergency_reset: "Reset awaryjny",
+                repair_history: "Historia napraw",
+                usage_statistics: "Statystyki użytkowania",
+                home: "Strona główna",
+                ai_recipes: "AI Przepisy",
+                shopping: "Lista",
+                upgrade_to_premium: "Przejdź na Premium",
+                premium_benefits: "Odblokuj wszystkie funkcje",
+                premium_plan: "Plan Premium",
+                monthly: "miesięcznie",
+                unlimited_ai: "Nieograniczone zapytania AI",
+                advanced_features: "Zaawansowane funkcje",
+                priority_support: "Priorytetowe wsparcie",
+                cancel: "Anuluj",
+                subscribe: "Subskrybuj",
+                close: "Zamknij",
+                new_season: "Nowy sezon rozpoczął się!",
+                spring_recommendations: "Sprawdź zalecenia wiosenne",
+                ai_limit_reminder: "Zostało Ci 3 zapytania AI",
+                upgrade_suggestion: "Rozważ przejście na Premium",
+                detected: "Wykryto:"
+            },
+            en: {
+                loading: "Loading...",
+                app_title: "Seasonality according to Chinese harmony",
+                app_subtitle: "Discover the wisdom of traditional medicine",
+                email: "Email",
+                password: "Password",
+                remember_me: "Remember me",
+                forgot_password: "Forgot password?",
+                login: "Sign In",
+                or: "or",
+                login_google: "Sign in with Google",
+                login_apple: "Sign in with Apple",
+                no_account: "Don't have an account?",
+                register: "Sign Up",
+                app_name: "Seasonality",
+                profile: "Profile",
+                settings: "Settings",
+                admin_panel: "Admin Panel",
+                logout: "Logout",
+                welcome: "Welcome to seasonal harmony",
+                welcome_desc: "Discover the wisdom of traditional Chinese harmony",
+                spring: "Spring",
+                yang_energy: "Yang Energy",
+                ai_queries: "AI Queries",
+                saved_recipes: "Saved Recipes",
+                seasonal_calendar: "Seasonal Calendar",
+                summer: "Summer",
+                autumn: "Autumn",
+                winter: "Winter",
+                spring_desc: "Renewal • Yang",
+                summer_desc: "Activity • Yang",
+                autumn_desc: "Harvest • Yin",
+                winter_desc: "Contemplation • Yin",
+                todays_recommendations: "Today's Recommendations",
+                food_recommendation: "Eat light and fresh",
+                food_recommendation_desc: "Focus on green vegetables",
+                activity_recommendation: "Exercise outdoors in the morning",
+                activity_recommendation_desc: "Utilize growing Yang energy",
+                ai_recipe_generator: "AI Recipe Generator",
+                queries_left: "Queries:",
+                ingredients: "Ingredients (optional)",
+                dietary_preferences: "Dietary Preferences",
+                vegan: "Vegan",
+                vegetarian: "Vegetarian",
+                gluten_free: "Gluten-free",
+                low_carb: "Low-carb",
+                season_focus: "Season",
+                current_season: "Current season",
+                generate_recipe: "Generate Recipe",
+                generated_recipe: "Generated Recipe",
+                save: "Save",
+                shopping_list: "Shopping List",
+                export: "Export",
+                quick_add: "Quick Add",
+                vegetables: "Vegetables",
+                fruits: "Fruits",
+                spices: "Spices",
+                herbs: "Herbs",
+                account_settings: "Account Settings",
+                notifications: "Notifications",
+                dark_mode: "Dark Mode",
+                subscription: "Subscription",
+                current_plan: "Free Plan",
+                queries_per_month: "10 queries per month",
+                upgrade: "Upgrade",
+                data_management: "Data Management",
+                export_data: "Export Data",
+                clear_data: "Clear Data",
+                system_status: "System Status",
+                api_status: "API Status",
+                users_online: "Users Online",
+                api_configuration: "API Configuration",
+                ai_api_key: "AI API Key",
+                stripe_public_key: "Stripe Public Key",
+                stripe_secret_key: "Stripe Secret Key",
+                save_configuration: "Save Configuration",
+                auto_repair_system: "Auto-Repair System",
+                system_health: "System Health",
+                auto_repair_rules: "Auto-Repair Rules",
+                auto_api_switch: "Automatic API Switching",
+                auto_cache_clear: "Automatic Cache Clearing",
+                auto_session_cleanup: "Automatic Session Cleanup",
+                manual_repair_tools: "Manual Repair Tools",
+                clear_cache: "Clear Cache",
+                reset_sessions: "Reset Sessions",
+                restart_api: "Restart API",
+                emergency_reset: "Emergency Reset",
+                repair_history: "Repair History",
+                usage_statistics: "Usage Statistics",
+                home: "Home",
+                ai_recipes: "AI Recipes",
+                shopping: "Shopping",
+                upgrade_to_premium: "Upgrade to Premium",
+                premium_benefits: "Unlock all features",
+                premium_plan: "Premium Plan",
+                monthly: "monthly",
+                unlimited_ai: "Unlimited AI queries",
+                advanced_features: "Advanced features",
+                priority_support: "Priority support",
+                cancel: "Cancel",
+                subscribe: "Subscribe",
+                close: "Close",
+                new_season: "New season has started!",
+                spring_recommendations: "Check spring recommendations",
+                ai_limit_reminder: "You have 3 AI queries left",
+                upgrade_suggestion: "Consider upgrading to Premium",
+                detected: "Detected:"
+            }
+        };
+
+        // API Detection Patterns
+        const apiPatterns = {
+            openai: {
+                patterns: [/^sk-proj-/, /^sk-[A-Za-z0-9]{48}$/],
+                name: "OpenAI GPT-4",
+                endpoint: "https://api.openai.com/v1/chat/completions"
+            },
+            claude: {
+                patterns: [/^sk-ant-api03-/, /^sk-ant-/],
+                name: "Anthropic Claude 3.5",
+                endpoint: "https://api.anthropic.com/v1/messages"
+            },
+            gemini: {
+                patterns: [/^AIzaSy/, /^AIza/],
+                name: "Google Gemini Pro",
+                endpoint: "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
+            },
+            llama: {
+                patterns: [/^llama-/, /^meta-/],
+                name: "Meta Llama 3.1",
+                endpoint: "https://api.together.xyz/inference"
+            },
+            cohere: {
+                patterns: [/^co_/, /^cohere-/],
+                name: "Cohere Command R+",
+                endpoint: "https://api.cohere.ai/v1/generate"
+            },
+            mistral: {
+                patterns: [/^mi_/, /^mistral-/],
+                name: "Mistral Large",
+                endpoint: "https://api.mistral.ai/v1/chat/completions"
+            },
+            huggingface: {
+                patterns: [/^hf_/, /^huggingface-/],
+                name: "Hugging Face",
+                endpoint: "https://api-inference.huggingface.co/models"
+            }
+        };
+
+        // Initialize App
+        window.addEventListener('load', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Load saved data
+            loadSavedData();
+            
+            // Initialize Stripe
+            if (window.Stripe) {
+                stripe = Stripe('pk_test_demo'); // Demo key
+            }
+            
+            // Check if user is logged in
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showMainApp();
+            } else {
+                showLoginScreen();
+            }
+
+            // Hide loading screen
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }, 1500);
+
+            // Initialize language
+            updateLanguage();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Initialize charts if admin
+            if (currentUser && currentUser.role === 'admin') {
+                setTimeout(initializeCharts, 1000);
+            }
+
+            // Start monitoring system
+            startSystemMonitoring();
+        }
+
+        function loadSavedData() {
+            // Load AI queries count
+            const savedQueries = localStorage.getItem('aiQueriesUsed');
+            if (savedQueries) {
+                aiQueriesUsed = parseInt(savedQueries);
+            }
+
+            // Load saved recipes
+            const savedRecipesData = localStorage.getItem('savedRecipes');
+            if (savedRecipesData) {
+                savedRecipes = JSON.parse(savedRecipesData);
+            }
+
+            // Load shopping items
+            const savedShoppingItems = localStorage.getItem('shoppingItems');
+            if (savedShoppingItems) {
+                shoppingItems = JSON.parse(savedShoppingItems);
+            }
+
+            // Load language preference
+            const savedLanguage = localStorage.getItem('currentLanguage');
+            if (savedLanguage) {
+                currentLanguage = savedLanguage;
+            }
+        }
+
+        function setupEventListeners() {
+            // Login form
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            
+            // Recipe form
+            document.getElementById('recipeForm').addEventListener('submit', handleRecipeGeneration);
+            
+            // Shopping list form
+            document.getElementById('addItemForm').addEventListener('submit', handleAddItem);
+            
+            // API config form
+            document.getElementById('apiConfigForm').addEventListener('submit', handleApiConfig);
+            
+            // API key input for detection
+            document.getElementById('apiKey').addEventListener('input', handleApiKeyInput);
+            
+            // Close modals on outside click
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('bg-black')) {
+                    closeAllModals();
+                }
+            });
+        }
+
+        // Language Functions
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('currentLanguage', lang);
+            updateLanguage();
+            updateLanguageButtons();
+        }
+
+        function toggleLanguage() {
+            const newLang = currentLanguage === 'pl' ? 'en' : 'pl';
+            switchLanguage(newLang);
+        }
+
+        function updateLanguage() {
+            const elements = document.querySelectorAll('[data-translate]');
+            elements.forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[currentLanguage] && translations[currentLanguage][key]) {
+                    if (element.tagName === 'INPUT' && (element.type === 'text' || element.type === 'email' || element.type === 'password')) {
+                        element.placeholder = translations[currentLanguage][key];
+                    } else {
+                        element.textContent = translations[currentLanguage][key];
+                    }
+                }
+            });
+        }
+
+        function updateLanguageButtons() {
+            const plBtn = document.getElementById('pl-btn');
+            const enBtn = document.getElementById('en-btn');
+            
+            if (currentLanguage === 'pl') {
+                plBtn.classList.add('bg-green-600', 'text-white');
+                plBtn.classList.remove('text-gray-600');
+                enBtn.classList.remove('bg-green-600', 'text-white');
+                enBtn.classList.add('text-gray-600');
+            } else {
+                enBtn.classList.add('bg-green-600', 'text-white');
+                enBtn.classList.remove('text-gray-600');
+                plBtn.classList.remove('bg-green-600', 'text-white');
+                plBtn.classList.add('text-gray-600');
+            }
+        }
+
+        // Authentication Functions
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Demo authentication
+            const users = {
+                'admin@sezonowosc.pl': { password: 'admin123', role: 'admin', name: 'Administrator' },
+                'user@test.pl': { password: 'user123', role: 'user', name: 'Test User' },
+                'premium@test.pl': { password: 'premium123', role: 'premium', name: 'Premium User' }
+            };
+
+            if (users[email] && users[email].password === password) {
+                currentUser = { email, ...users[email] };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                showMainApp();
+                showNotification('Zalogowano pomyślnie!', 'success');
+            } else {
+                showNotification('Błędne dane logowania!', 'error');
+            }
+        }
+
+        function loginWithGoogle() {
+            // Demo Google login
+            currentUser = { email: 'google@user.com', role: 'user', name: 'Google User' };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            showMainApp();
+            showNotification('Zalogowano przez Google!', 'success');
+        }
+
+        function loginWithApple() {
+            // Demo Apple login
+            currentUser = { email: 'apple@user.com', role: 'user', name: 'Apple User' };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            showMainApp();
+            showNotification('Zalogowano przez Apple!', 'success');
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            showLoginScreen();
+            showNotification('Wylogowano pomyślnie!', 'success');
+        }
+
+        // Screen Functions
+        function showLoginScreen() {
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+            updateLanguageButtons();
+        }
+
+        function showMainApp() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            
+            // Show admin menu if admin
+            if (currentUser.role === 'admin') {
+                document.getElementById('adminMenuLink').classList.remove('hidden');
+            } else {
+                document.getElementById('adminMenuLink').classList.add('hidden');
+            }
+            
+            updateUI();
+        }
+
+        // Section Navigation
+        function showSection(sectionName) {
+            // Hide all sections
+            const sections = ['dashboard', 'aiRecipes', 'shoppingList', 'settings', 'adminPanel'];
+            sections.forEach(section => {
+                document.getElementById(section).classList.add('hidden');
+            });
+
+            // Show selected section
+            document.getElementById(sectionName).classList.remove('hidden');
+            currentSection = sectionName;
+
+            // Update navigation
+            updateNavigation();
+            
+            // Section-specific initialization
+            if (sectionName === 'shoppingList') {
+                updateShoppingList();
+            } else if (sectionName === 'aiRecipes') {
+                updateSavedRecipes();
+            } else if (sectionName === 'adminPanel' && currentUser.role === 'admin') {
+                updateAdminPanel();
+            }
+        }
+
+        function updateNavigation() {
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(btn => {
+                btn.classList.remove('active', 'text-green-600', 'bg-green-50');
+                btn.classList.add('text-gray-600');
+            });
+
+            // Map sections to nav buttons
+            const sectionMap = {
+                dashboard: 0,
+                aiRecipes: 1,
+                shoppingList: 2,
+                settings: 3
+            };
+
+            if (sectionMap[currentSection] !== undefined) {
+                const activeBtn = navButtons[sectionMap[currentSection]];
+                activeBtn.classList.add('active', 'text-green-600', 'bg-green-50');
+                activeBtn.classList.remove('text-gray-600');
+            }
+        }
+
+        // UI Update Functions
+        function updateUI() {
+            // Update AI queries counter
+            const remainingQueries = Math.max(0, 10 - aiQueriesUsed);
+            document.getElementById('aiQueriesCount').textContent = `${remainingQueries}/10`;
+            document.getElementById('aiQueriesLeft').textContent = `${remainingQueries}/10`;
+            
+            // Update saved recipes count
+            document.getElementById('savedRecipesCount').textContent = savedRecipes.length;
+            
+            // Update current season
+            updateCurrentSeason();
+        }
+
+        function updateCurrentSeason() {
+            const month = new Date().getMonth();
+            let season = 'spring';
+            
+            if (month >= 5 && month <= 7) season = 'summer';
+            else if (month >= 8 && month <= 10) season = 'autumn';
+            else if (month >= 11 || month <= 1) season = 'winter';
+            
+            selectSeason(season);
+        }
+
+        function selectSeason(season) {
+            // Update active season button
+            const seasonButtons = document.querySelectorAll('.season-btn');
+            seasonButtons.forEach(btn => {
+                btn.classList.remove('active', 'ring-2', 'ring-green-500');
+            });
+            
+            // Add active class to selected season
+            const activeButton = document.querySelector(`[onclick="selectSeason('${season}')"]`);
+            if (activeButton) {
+                activeButton.classList.add('active', 'ring-2', 'ring-green-500');
+            }
+            
+            // Update recommendations based on season
+            updateSeasonalRecommendations(season);
+        }
+
+        function updateSeasonalRecommendations(season) {
+            const recommendations = {
+                spring: [
+                    { icon: 'fas fa-utensils', title: 'Jedz lekko i świeżo', desc: 'Skoncentruj się na zielonych warzywach' },
+                    { icon: 'fas fa-running', title: 'Ćwicz rano na świeżym powietrzu', desc: 'Wykorzystaj rosnącą energię Yang' }
+                ],
+                summer: [
+                    { icon: 'fas fa-glass-water', title: 'Pij dużo wody', desc: 'Chłodzące napoje i owoce' },
+                    { icon: 'fas fa-sun', title: 'Aktywność w cieniu', desc: 'Unikaj nadmiernego wysiłku w pełnym słońcu' }
+                ],
+                autumn: [
+                    { icon: 'fas fa-soup', title: 'Ciepłe zupy i gulasz', desc: 'Rozgrzewające posiłki' },
+                    { icon: 'fas fa-leaf', title: 'Zbieraj energię', desc: 'Przygotuj się na zimę' }
+                ],
+                winter: [
+                    { icon: 'fas fa-mug-hot', title: 'Gorące napoje', desc: 'Herbaty z imbirem i miodem' },
+                    { icon: 'fas fa-meditation', title: 'Kontemplacja', desc: 'Czas na refleksję i regenerację' }
+                ]
+            };
+            
+            const container = document.getElementById('seasonalRecommendations');
+            container.innerHTML = recommendations[season].map(rec => `
+                <div class="flex items-start space-x-3">
+                    <div class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
+                        <i class="${rec.icon} text-green-600 text-xs"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-800 font-medium">${rec.title}</p>
+                        <p class="text-gray-600 text-sm">${rec.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // AI Recipe Functions
+        function handleRecipeGeneration(e) {
+            e.preventDefault();
+            
+            if (aiQueriesUsed >= 10 && currentUser.role !== 'premium') {
+                showUpgradeModal();
+                return;
+            }
+            
+            const ingredients = document.getElementById('ingredients').value;
+            const preferences = Array.from(document.querySelectorAll('#recipeForm input[type="checkbox"]:checked')).map(cb => cb.value);
+            const season = document.getElementById('seasonFocus').value;
+            
+            // Show loading
+            const generateBtn = document.getElementById('generateBtn');
+            const originalText = generateBtn.innerHTML;
+            generateBtn.innerHTML = '<i class="fas fa-spinner animate-spin mr-2"></i>Generowanie...';
+            generateBtn.disabled = true;
+            
+            // Simulate AI generation
+            setTimeout(() => {
+                const recipe = generateMockRecipe(ingredients, preferences, season);
+                displayGeneratedRecipe(recipe);
+                
+                // Update queries count
+                if (currentUser.role !== 'premium') {
+                    aiQueriesUsed++;
+                    localStorage.setItem('aiQueriesUsed', aiQueriesUsed.toString());
+                    updateUI();
+                }
+                
+                // Reset button
+                generateBtn.innerHTML = originalText;
+                generateBtn.disabled = false;
+                
+                showNotification('Przepis wygenerowany!', 'success');
+            }, 2000);
+        }
+
+        function generateMockRecipe(ingredients, preferences, season) {
+            const recipes = {
+                spring: {
+                    title: "Wiosenna sałatka z młodymi warzywami",
+                    ingredients: ["młode liście szpinaku", "rzodkiewka", "ogórek", "imbir", "olej sezamowy"],
+                    instructions: "1. Umyj warzywa\n2. Pokrój w cienkie plastry\n3. Dodaj świeży imbir\n4. Polej olejem sezamowym"
+                },
+                summer: {
+                    title: "Chłodzące gazpacho",
+                    ingredients: ["pomidory", "ogórek", "papryka", "cebula", "bazylia"],
+                    instructions: "1. Zblenduj warzywa\n2. Dopraw solą i pieprzem\n3. Schłódź\n4. Podawaj z bazylią"
+                },
+                autumn: {
+                    title: "Rozgrzewający gulasz z dynią",
+                    ingredients: ["dynia", "marchew", "cebula", "imbir", "kurkuma"],
+                    instructions: "1. Podsmaż cebulę\n2. Dodaj dynię i marchew\n3. Dusz z przyprawami\n4. Gotuj 30 minut"
+                },
+                winter: {
+                    title: "Wzmacniająca zupa z korzeniami",
+                    ingredients: ["seler", "marchew", "imbir", "czosnek", "kurkuma"],
+                    instructions: "1. Pokrój warzywa\n2. Gotuj w bulionie\n3. Dodaj przyprawy\n4. Gotuj 45 minut"
+                }
+            };
+            
+            const currentSeason = season === 'current' ? getCurrentSeason() : season;
+            return recipes[currentSeason] || recipes.spring;
+        }
+
+        function getCurrentSeason() {
+            const month = new Date().getMonth();
+            if (month >= 5 && month <= 7) return 'summer';
+            if (month >= 8 && month <= 10) return 'autumn';
+            if (month >= 11 || month <= 1) return 'winter';
+            return 'spring';
+        }
+
+        function displayGeneratedRecipe(recipe) {
+            const recipeContainer = document.getElementById('generatedRecipe');
+            const recipeContent = document.getElementById('recipeContent');
+            
+            recipeContent.innerHTML = `
+                <h5 class="font-semibold text-gray-800 mb-2">${recipe.title}</h5>
+                <div class="mb-3">
+                    <h6 class="font-medium text-gray-700 mb-1">Składniki:</h6>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        ${recipe.ingredients.map(ing => `<li>• ${ing}</li>`).join('')}
+                    </ul>
+                </div>
+                <div>
+                    <h6 class="font-medium text-gray-700 mb-1">Instrukcje:</h6>
+                    <div class="text-sm text-gray-600 whitespace-pre-line">${recipe.instructions}</div>
+                </div>
+            `;
+            
+            recipeContainer.classList.remove('hidden');
+            window.currentGeneratedRecipe = recipe;
+        }
+
+        function saveRecipe() {
+            if (window.currentGeneratedRecipe) {
+                const recipe = {
+                    ...window.currentGeneratedRecipe,
+                    id: Date.now(),
+                    savedAt: new Date().toISOString()
+                };
+                
+                savedRecipes.unshift(recipe);
+                localStorage.setItem('savedRecipes', JSON.stringify(savedRecipes));
+                updateUI();
+                updateSavedRecipes();
+                showNotification('Przepis zapisany!', 'success');
+            }
+        }
+
+        function updateSavedRecipes() {
+            const container = document.getElementById('savedRecipes');
+            
+            if (savedRecipes.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-4">Brak zapisanych przepisów</p>';
+                return;
+            }
+            
+            container.innerHTML = savedRecipes.map(recipe => `
+                <div class="p-4 bg-gray-50 rounded-xl">
+                    <div class="flex items-center justify-between mb-2">
+                        <h5 class="font-medium text-gray-800">${recipe.title}</h5>
+                        <button onclick="deleteRecipe(${recipe.id})" class="text-red-500 hover:text-red-700">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                    <p class="text-sm text-gray-600">${recipe.ingredients.slice(0, 3).join(', ')}...</p>
+                    <p class="text-xs text-gray-500 mt-2">${new Date(recipe.savedAt).toLocaleDateString()}</p>
+                </div>
+            `).join('');
+        }
+
+        function deleteRecipe(id) {
+            savedRecipes = savedRecipes.filter(recipe => recipe.id !== id);
+            localStorage.setItem('savedRecipes', JSON.stringify(savedRecipes));
+            updateUI();
+            updateSavedRecipes();
+            showNotification('Przepis usunięty!', 'success');
+        }
+
+        // Shopping List Functions
+        function handleAddItem(e) {
+            e.preventDefault();
+            const itemName = document.getElementById('newItem').value.trim();
+            
+            if (itemName) {
+                const item = {
+                    id: Date.now(),
+                    name: itemName,
+                    completed: false,
+                    category: 'other'
+                };
+                
+                shoppingItems.push(item);
+                localStorage.setItem('shoppingItems', JSON.stringify(shoppingItems));
+                document.getElementById('newItem').value = '';
+                updateShoppingList();
+                showNotification('Produkt dodany!', 'success');
+            }
+        }
+
+        function updateShoppingList() {
+            const container = document.getElementById('shoppingItems');
+            
+            if (shoppingItems.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-4">Lista zakupów jest pusta</p>';
+                return;
+            }
+            
+            container.innerHTML = shoppingItems.map(item => `
+                <div class="flex items-center space-x-3 p-3 bg-white rounded-xl border border-gray-200">
+                    <input type="checkbox" ${item.completed ? 'checked' : ''} 
+                           onchange="toggleItem(${item.id})"
+                           class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500">
+                    <span class="flex-1 ${item.completed ? 'line-through text-gray-500' : 'text-gray-800'}">${item.name}</span>
+                    <button onclick="deleteItem(${item.id})" class="text-red-500 hover:text-red-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function toggleItem(id) {
+            const item = shoppingItems.find(item => item.id === id);
+            if (item) {
+                item.completed = !item.completed;
+                localStorage.setItem('shoppingItems', JSON.stringify(shoppingItems));
+                updateShoppingList();
+            }
+        }
+
+        function deleteItem(id) {
+            shoppingItems = shoppingItems.filter(item => item.id !== id);
+            localStorage.setItem('shoppingItems', JSON.stringify(shoppingItems));
+            updateShoppingList();
+            showNotification('Produkt usunięty!', 'success');
+        }
+
+        function addCategoryItems(category) {
+            const categoryItems = {
+                vegetables: ['Marchew', 'Brokuły', 'Szpinak', 'Pomidory'],
+                fruits: ['Jabłka', 'Banany', 'Pomarańcze', 'Jagody'],
+                spices: ['Imbir', 'Kurkuma', 'Cynamon', 'Czosnek'],
+                herbs: ['Bazylia', 'Oregano', 'Tymianek', 'Mięta']
+            };
+            
+            const items = categoryItems[category] || [];
+            items.forEach(itemName => {
+                const item = {
+                    id: Date.now() + Math.random(),
+                    name: itemName,
+                    completed: false,
+                    category: category
+                };
+                shoppingItems.push(item);
+            });
+            
+            localStorage.setItem('shoppingItems', JSON.stringify(shoppingItems));
+            updateShoppingList();
+            showNotification(`Dodano produkty z kategorii: ${category}`, 'success');
+        }
+
+        function exportShoppingList() {
+            const items = shoppingItems.map(item => 
+                `${item.completed ? '✓' : '○'} ${item.name}`
+            ).join('\n');
+            
+            const content = `Lista zakupów - ${new Date().toLocaleDateString()}\n\n${items}`;
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'lista_zakupow.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('Lista wyeksportowana!', 'success');
+        }
+
+        // Admin Panel Functions
+        function showAdminPanel() {
+            if (currentUser.role === 'admin') {
+                showSection('adminPanel');
+            }
+        }
+
+        function updateAdminPanel() {
+            // Update system status
+            updateSystemStatus();
+            
+            // Initialize charts
+            setTimeout(initializeCharts, 500);
+        }
+
+        function updateSystemStatus() {
+            // Simulate system health
+            const health = 96;
+            document.getElementById('healthScore').textContent = `${health}/100`;
+            
+            // Update online users (simulation)
+            document.getElementById('usersOnline').textContent = Math.floor(Math.random() * 50) + 20;
+            
+            // Update API status
+            document.getElementById('apiStatus').textContent = 'Online';
+        }
+
+        function handleApiConfig(e) {
+            e.preventDefault();
+            
+            const apiKey = document.getElementById('apiKey').value;
+            const stripePublic = document.getElementById('stripePublicKey').value;
+            const stripeSecret = document.getElementById('stripeSecretKey').value;
+            
+            // Save configuration
+            localStorage.setItem('apiConfig', JSON.stringify({
+                apiKey: apiKey,
+                stripePublic: stripePublic,
+                stripeSecret: stripeSecret
+            }));
+            
+            showNotification('Konfiguracja zapisana!', 'success');
+        }
+
+        function handleApiKeyInput(e) {
+            const apiKey = e.target.value;
+            detectApiProvider(apiKey);
+        }
+
+        function detectApiProvider(apiKey) {
+            const detectionDiv = document.getElementById('apiDetection');
+            const providerDiv = document.getElementById('detectedProvider');
+            const providerName = document.getElementById('providerName');
+            
+            for (const [provider, config] of Object.entries(apiPatterns)) {
+                for (const pattern of config.patterns) {
+                    if (pattern.test(apiKey)) {
+                        detectionDiv.classList.remove('hidden');
+                        providerDiv.classList.remove('hidden');
+                        providerName.textContent = config.name;
+                        return;
+                    }
+                }
+            }
+            
+            detectionDiv.classList.add('hidden');
+            providerDiv.classList.add('hidden');
+        }
+
+        function toggleApiKeyVisibility() {
+            const apiKeyInput = document.getElementById('apiKey');
+            const toggleIcon = document.getElementById('apiKeyToggle');
+            
+            if (apiKeyInput.type === 'password') {
+                apiKeyInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                apiKeyInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Auto-Repair Functions
+        function clearCache() {
+            // Simulate cache clearing
+            setTimeout(() => {
+                showNotification('Cache wyczyszczony!', 'success');
+                addRepairLog('Cache cleared manually');
+            }, 1000);
+        }
+
+        function resetSessions() {
+            // Simulate session reset
+            setTimeout(() => {
+                showNotification('Sesje zresetowane!', 'success');
+                addRepairLog('User sessions reset');
+            }, 1000);
+        }
+
+        function restartApi() {
+            // Simulate API restart
+            setTimeout(() => {
+                showNotification('API zrestartowane!', 'success');
+                addRepairLog('API service restarted');
+            }, 2000);
+        }
+
+        function emergencyReset() {
+            if (confirm('Czy na pewno chcesz wykonać reset awaryjny?')) {
+                setTimeout(() => {
+                    showNotification('Reset awaryjny wykonany!', 'warning');
+                    addRepairLog('Emergency reset performed');
+                }, 2000);
+            }
+        }
+
+        function addRepairLog(message) {
+            const time = new Date().toLocaleTimeString();
+            console.log(`[${time}] ${message}`);
+        }
+
+        // System Monitoring
+        function startSystemMonitoring() {
+            // Simulate system monitoring
+            setInterval(() => {
+                // Auto-repair simulation
+                if (Math.random() < 0.1) { // 10% chance
+                    performAutoRepair();
+                }
+            }, 30000); // Check every 30 seconds
+        }
+
+        function performAutoRepair() {
+            const repairs = [
+                'Auto-fixed API timeout',
+                'Cleared corrupted cache',
+                'Restarted slow service',
+                'Optimized database queries'
+            ];
+            
+            const repair = repairs[Math.floor(Math.random() * repairs.length)];
+            addRepairLog(repair);
+        }
+
+        // Chart Initialization
+        function initializeCharts() {
+            const ctx = document.getElementById('statsChart');
+            if (!ctx) return;
+            
+            new Chart(ctx.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['Pon', 'Wt', 'Śr', 'Czw', 'Pt', 'Sob', 'Ndz'],
+                    datasets: [{
+                        label: 'Zapytania AI',
+                        data: [12, 19, 8, 15, 25, 18, 14],
+                        borderColor: 'rgb(34, 197, 94)',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Aktywni użytkownicy',
+                        data: [25, 32, 28, 35, 42, 38, 31],
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Modal Functions
+        function showUpgradeModal() {
+            document.getElementById('upgradeModal').classList.remove('hidden');
+        }
+
+        function closeUpgradeModal() {
+            document.getElementById('upgradeModal').classList.add('hidden');
+        }
+
+        function subscribeToPremium() {
+            // Simulate Stripe payment
+            setTimeout(() => {
+                currentUser.role = 'premium';
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                closeUpgradeModal();
+                showNotification('Gratulacje! Jesteś teraz użytkownikiem Premium!', 'success');
+            }, 2000);
+        }
+
+        function showNotifications() {
+            document.getElementById('notificationModal').classList.remove('hidden');
+        }
+
+        function closeNotificationModal() {
+            document.getElementById('notificationModal').classList.add('hidden');
+        }
+
+        function closeAllModals() {
+            document.getElementById('upgradeModal').classList.add('hidden');
+            document.getElementById('notificationModal').classList.add('hidden');
+        }
+
+        // Utility Functions
+        function showProfile() {
+            showNotification('Funkcja profilu w rozwoju', 'info');
+        }
+
+        function showSettings() {
+            showSection('settings');
+        }
+
+        function toggleUserMenu() {
+            const menu = document.getElementById('userMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function exportData() {
+            const data = {
+                savedRecipes: savedRecipes,
+                shoppingItems: shoppingItems,
+                aiQueriesUsed: aiQueriesUsed,
+                exportDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'sezonowosc_data.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('Dane wyeksportowane!', 'success');
+        }
+
+        function clearData() {
+            if (confirm('Czy na pewno chcesz wyczyścić wszystkie dane?')) {
+                localStorage.clear();
+                savedRecipes = [];
+                shoppingItems = [];
+                aiQueriesUsed = 0;
+                updateUI();
+                updateShoppingList();
+                updateSavedRecipes();
+                showNotification('Dane wyczyszczone!', 'warning');
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-xl shadow-lg max-w-sm fade-in ${
+                type === 'success' ? 'bg-green-100 border border-green-200 text-green-800' :
+                type === 'error' ? 'bg-red-100 border border-red-200 text-red-800' :
+                type === 'warning' ? 'bg-yellow-100 border border-yellow-200 text-yellow-800' :
+                'bg-blue-100 border border-blue-200 text-blue-800'
+            }`;
+            
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <i class="fas ${
+                        type === 'success' ? 'fa-check-circle' :
+                        type === 'error' ? 'fa-exclamation-circle' :
+                        type === 'warning' ? 'fa-exclamation-triangle' :
+                        'fa-info-circle'
+                    }"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Close user menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const userMenu = document.getElementById('userMenu');
+            if (!e.target.closest('.relative') && !userMenu.classList.contains('hidden')) {
+                userMenu.classList.add('hidden');
+            }
+        });
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('data:application/javascript;base64,Y29uc3QgQ0FDSEVfTkFNRSA9ICdzZXpvbm93b3NjLXYxJzsKY29uc3QgdXJsc1RvQ2FjaGUgPSBbCiAgJy8nLAogICcvaW5kZXguaHRtbCcsCiAgJ2h0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9ucG0vdGFpbHdpbmRjc3NAMi4yLjE5L2Rpc3QvdGFpbHdpbmQubWluLmNzcycsCiAgJ2h0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9ucG0vQGZvcnRhd2Vzb21lL2ZvbnRhd2Vzb21lLWZyZWVANi40LjAvY3NzL2FsbC5taW4uY3NzJwpdOwoKc2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgZnVuY3Rpb24oZXZlbnQpIHsKICBldmVudC53YWl0VW50aWwoCiAgICBjYWNoZXMub3BlbihDQUNIRV9OQU1FKQogICAgICAudGhlbihmdW5jdGlvbihjYWNoZSkgewogICAgICAgIHJldHVybiBjYWNoZS5hZGRBbGwodXJsc1RvQ2FjaGUpOwogICAgICB9KQogICk7Cn0pOwoKc2VsZi5hZGRFdmVudExpc3RlbmVyKCdmZXRjaCcsIGZ1bmN0aW9uKGV2ZW50KSB7CiAgZXZlbnQucmVzcG9uZFdpdGgoCiAgICBjYWNoZXMubWF0Y2goZXZlbnQucmVxdWVzdCkKICAgICAgLnRoZW4oZnVuY3Rpb24ocmVzcG9uc2UpIHsKICAgICAgICBpZiAocmVzcG9uc2UpIHsKICAgICAgICAgIHJldHVybiByZXNwb25zZTsKICAgICAgICB9CiAgICAgICAgcmV0dXJuIGZldGNoKGV2ZW50LnJlcXVlc3QpOwogICAgfSkKICApOwp9KTs=')
+                .then(function(registration) {
+                    console.log('ServiceWorker registration successful');
+                })
+                .catch(function(err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDjxPSoJ8pjfOwWREft1zjEJfn6GgIRZNSQHgGUkRDRqWVy6bLLFwlr0V%2BrwKcPKhjUKlp5K129hDgD4RBNY%2BDrVGY3pBGjQOVbBNo6jEgQbskCU1ojBFEWCLzdY%2FZKz%2FOunYIDnMy13yaUUD3KDdG6ljDm%2FKB48sQ%2FDa1ota0TInb1mAd89BsYkbEg1fJCzC%2FsNTYlB1b3UG4pqg12oZdJTzZ0DUCnDE4c0654Md7YnjC7XwHRtQD%2FEcgFCdHVqiz9hvdnTbsGlJBt0sdWth0EBY41m9iOsrerVarbmHwObU4jHzARkE2orZifUCrBWhBkPFllRDz%2FqD5PSF5ed%2FYQEDHselHhODp0LPoRvRVK1QXbFPEpD57DmOIkrCZ41W0nLCSmLXMLGg7ePBHzCfMbsz0G3%2BZsZ%2BcaDydWBfixGjr7f4jDWvKAE3n3tycqizvx082XB7JuVk2ni1suWqnZci%2Fs4cQR7gELKguqNAMI%2FIprLxA9h9soyFb7QKeAuihB1DnmSZnTz84X1aMlMnUs8%3D";
+        window.__genspark_locale = "en-US";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDjxPSoJ8pjfOwWREft1zjEJfn6GgIRZNSQHgGUkRDRqWVy6bLLFwlr0V+rwKcPKhjUKlp5K129hDgD4RBNY+DrVGY3pBGjQOVbBNo6jEgQbskCU1ojBFEWCLzdY/ZKz/OunYIDnMy13yaUUD3KDdG6ljDm/KB48sQ/Da1ota0TInb1mAd89BsYkbEg1fJCzC/sNTYlB1b3UG4pqg12oZdJTzZ0DUCnDE4c0654Md7YnjC7XwHRtQD/EcgFCdHVqiz9hvdnTbsGlJBt0sdWth0EBY41m9iOsrerVarbmHwObU4jHzARkE2orZifUCrBWhBkPFllRDz/qD5PSF5ed/YQEDHselHhODp0LPoRvRVK1QXbFPEpD57DmOIkrCZ41W0nLCSmLXMLGg7ePBHzCfMbsz0G3+ZsZ+caDydWBfixGjr7f4jDWvKAE3n3tycqizvx082XB7JuVk2ni1suWqnZci/s4cQR7gELKguqNAMI/IprLxA9h9soyFb7QKeAuihB1DnmSZnTz84X1aMlMnUs8=";
+    </script>
+    
+    <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
+    
