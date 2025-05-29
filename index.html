@@ -7,100 +7,260 @@
     <title>TCM Harmony - Tradycyjna Chińska Medycyna</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --primary-blue: #4A6FA5;
-            --secondary-blue: #98B6E4;
+            --light-blue: #98B6E4;
             --gold-accent: #E8C07D;
         }
         
-        .bg-primary { background-color: var(--primary-blue); }
-        .bg-secondary { background-color: var(--secondary-blue); }
-        .bg-gold { background-color: var(--gold-accent); }
-        .text-primary { color: var(--primary-blue); }
-        .text-secondary { color: var(--secondary-blue); }
-        .text-gold { color: var(--gold-accent); }
-        .border-primary { border-color: var(--primary-blue); }
+        .primary-bg { background-color: var(--primary-blue); }
+        .light-bg { background-color: var(--light-blue); }
+        .gold-bg { background-color: var(--gold-accent); }
+        .primary-text { color: var(--primary-blue); }
+        .gold-text { color: var(--gold-accent); }
+        
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary-blue) 0%, #5a7fb5 100%);
+            width: 280px;
+            transition: transform 0.3s ease;
+        }
         
         .sidebar-item {
             transition: all 0.3s ease;
+            border-radius: 8px;
+            margin: 4px 12px;
         }
         
         .sidebar-item:hover {
-            background-color: rgba(152, 182, 228, 0.2);
+            background-color: rgba(255, 255, 255, 0.1);
             transform: translateX(4px);
         }
         
         .sidebar-item.active {
-            background-color: var(--primary-blue);
-            color: white;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-left: 4px solid var(--gold-accent);
         }
         
         .card {
             background: white;
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         
         .card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-        
-        .btn-primary {
-            background-color: var(--primary-blue);
-            color: white;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary:hover {
-            background-color: #3a5a8a;
-            transform: translateY(-1px);
-        }
-        
-        .btn-secondary {
-            background-color: var(--secondary-blue);
-            color: white;
-        }
-        
-        .btn-gold {
-            background-color: var(--gold-accent);
-            color: #333;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
         
         .season-card {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            border-left: 4px solid var(--primary-blue);
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
         }
         
-        .recipe-card {
-            background: white;
+        .season-card:hover {
+            border-color: var(--primary-blue);
+            transform: scale(1.02);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+            color: white;
+            border: none;
             border-radius: 8px;
-            overflow: hidden;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(74, 111, 165, 0.3);
+        }
+        
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold-accent), #f0d493);
+            color: #333;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .language-switcher {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .language-option {
+            padding: 6px 12px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .language-option.active {
+            background: rgba(255, 255, 255, 0.3);
+            font-weight: 600;
         }
         
         .notification {
             position: fixed;
             top: 20px;
             right: 20px;
-            z-index: 1000;
+            padding: 16px 24px;
+            background: #10B981;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
             transform: translateX(400px);
             transition: transform 0.3s ease;
+            z-index: 1000;
         }
         
         .notification.show {
             transform: translateX(0);
         }
         
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: #e5e7eb;
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .toggle-switch.active {
+            background: var(--primary-blue);
+        }
+        
+        .toggle-handle {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .toggle-switch.active .toggle-handle {
+            transform: translateX(24px);
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+        
+        .progress-bar {
+            background: #e5e7eb;
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, var(--primary-blue), var(--light-blue));
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.6s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                height: 100%;
+                z-index: 1000;
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+            }
+            
+            .mobile-overlay.show {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+        
+        .recipe-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .loading-spinner {
+            border: 3px solid #f3f4f6;
             border-top: 3px solid var(--primary-blue);
             border-radius: 50%;
+            width: 30px;
+            height: 30px;
             animation: spin 1s linear infinite;
         }
         
@@ -108,859 +268,853 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .stats-card {
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
-            color: white;
-        }
-        
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-        
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 24px;
-        }
-        
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        input:checked + .slider {
-            background-color: var(--primary-blue);
-        }
-        
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
     </style>
 </head>
 <body class="bg-gray-50">
     <div id="app">
         <!-- Login Screen -->
-        <div id="loginScreen" class="min-h-screen bg-primary flex items-center justify-center">
-            <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <div id="loginScreen" class="min-h-screen primary-bg flex items-center justify-center">
+            <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md">
                 <div class="text-center mb-8">
-                    <div class="bg-primary w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div class="w-20 h-20 primary-bg rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-yin-yang text-white text-2xl"></i>
                     </div>
-                    <h1 class="text-2xl font-bold text-gray-800">TCM Harmony</h1>
-                    <p class="text-gray-600">Tradycyjna Chińska Medycyna</p>
+                    <h1 class="text-2xl font-bold primary-text" data-translate="app_title">TCM Harmony</h1>
+                    <p class="text-gray-600 mt-2" data-translate="app_subtitle">Tradycyjna Chińska Medycyna</p>
                 </div>
                 
-                <form id="loginForm" onsubmit="login(event)">
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
-                        <input type="email" id="email" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
+                <form id="loginForm" class="space-y-6">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-medium mb-2" data-translate="email">Email</label>
+                        <input type="email" id="loginEmail" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
                     </div>
                     
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-bold mb-2">Hasło</label>
-                        <input type="password" id="password" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-medium mb-2" data-translate="password">Hasło</label>
+                        <input type="password" id="loginPassword" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
                     </div>
                     
-                    <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center justify-between">
                         <label class="flex items-center">
-                            <input type="checkbox" class="mr-2"> Zapamiętaj mnie
+                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <span class="ml-2 text-sm text-gray-600" data-translate="remember_me">Zapamiętaj mnie</span>
                         </label>
-                        <a href="#" class="text-secondary text-sm">Zapomniałeś hasła?</a>
+                        <a href="#" class="text-sm primary-text hover:underline" data-translate="forgot_password">Zapomniałeś hasła?</a>
                     </div>
                     
-                    <button type="submit" class="w-full btn-primary py-3 rounded-lg font-semibold">
-                        <i class="fas fa-sign-in-alt mr-2"></i> Zaloguj się
+                    <button type="submit" class="w-full btn-primary text-lg">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        <span data-translate="login">Zaloguj się</span>
                     </button>
                 </form>
+                
+                <!-- Language Switcher on Login -->
+                <div class="mt-6 flex justify-center">
+                    <div class="language-switcher">
+                        <div class="language-option active" data-lang="pl">🇵🇱 PL</div>
+                        <div class="language-option" data-lang="en">🇺🇸 EN</div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Main App -->
-        <div id="mainApp" class="hidden min-h-screen flex">
+        <!-- Main Application -->
+        <div id="mainApp" class="hidden">
+            <!-- Mobile Overlay -->
+            <div id="mobileOverlay" class="mobile-overlay"></div>
+            
             <!-- Sidebar -->
-            <div class="bg-primary w-64 min-h-screen shadow-lg">
-                <div class="p-6 border-b border-blue-400">
-                    <div class="flex items-center">
-                        <div class="bg-white w-10 h-10 rounded-full flex items-center justify-center mr-3">
-                            <i class="fas fa-yin-yang text-primary"></i>
+            <div id="sidebar" class="sidebar fixed left-0 top-0 h-full z-50">
+                <div class="p-6 border-b border-white border-opacity-20">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-yin-yang text-white text-xl"></i>
                         </div>
-                        <div class="text-white">
-                            <div class="font-semibold">TCM Harmony</div>
-                            <div id="userRole" class="text-sm text-blue-200">Witaj, Administrator</div>
+                        <div>
+                            <h2 class="text-white font-bold text-lg">TCM Harmony</h2>
+                            <p id="userRole" class="text-white text-opacity-75 text-sm">Witaj, Administrator</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Language Switcher in Sidebar -->
+                    <div class="mt-4">
+                        <div class="language-switcher">
+                            <div class="language-option active" data-lang="pl">🇵🇱 PL</div>
+                            <div class="language-option" data-lang="en">🇺🇸 EN</div>
                         </div>
                     </div>
                 </div>
                 
-                <nav class="mt-6">
-                    <div class="sidebar-item px-6 py-3 cursor-pointer flex items-center text-white active" onclick="showPage('home')">
-                        <i class="fas fa-home mr-3"></i> Strona główna
+                <nav class="py-6">
+                    <div class="sidebar-item active py-3 px-4 cursor-pointer" data-page="home">
+                        <i class="fas fa-home mr-3 text-white"></i>
+                        <span class="text-white" data-translate="home">Strona główna</span>
                     </div>
-                    <div class="sidebar-item px-6 py-3 cursor-pointer flex items-center text-white" onclick="showPage('calendar')">
-                        <i class="fas fa-calendar-alt mr-3"></i> Kalendarz
+                    <div class="sidebar-item py-3 px-4 cursor-pointer" data-page="calendar">
+                        <i class="fas fa-calendar-alt mr-3 text-white"></i>
+                        <span class="text-white" data-translate="calendar">Kalendarz</span>
                     </div>
-                    <div class="sidebar-item px-6 py-3 cursor-pointer flex items-center text-white" onclick="showPage('recipes')">
-                        <i class="fas fa-utensils mr-3"></i> Przepisy
+                    <div class="sidebar-item py-3 px-4 cursor-pointer" data-page="recipes">
+                        <i class="fas fa-utensils mr-3 text-white"></i>
+                        <span class="text-white" data-translate="recipes">Przepisy</span>
                     </div>
-                    <div class="sidebar-item px-6 py-3 cursor-pointer flex items-center text-white" onclick="showPage('shopping')">
-                        <i class="fas fa-shopping-cart mr-3"></i> Zakupy
+                    <div class="sidebar-item py-3 px-4 cursor-pointer" data-page="shopping">
+                        <i class="fas fa-shopping-cart mr-3 text-white"></i>
+                        <span class="text-white" data-translate="shopping">Zakupy</span>
                     </div>
-                    <div class="sidebar-item px-6 py-3 cursor-pointer flex items-center text-white" onclick="showPage('settings')">
-                        <i class="fas fa-cog mr-3"></i> Ustawienia
+                    <div class="sidebar-item py-3 px-4 cursor-pointer" data-page="settings">
+                        <i class="fas fa-cog mr-3 text-white"></i>
+                        <span class="text-white" data-translate="settings">Ustawienia</span>
                     </div>
-                    <div id="adminMenuItem" class="sidebar-item px-6 py-3 cursor-pointer flex items-center text-white" onclick="showPage('admin')">
-                        <i class="fas fa-shield-alt mr-3"></i> Panel Admin
+                    <div id="adminMenuItem" class="sidebar-item py-3 px-4 cursor-pointer" data-page="admin">
+                        <i class="fas fa-shield-alt mr-3 text-white"></i>
+                        <span class="text-white" data-translate="admin_panel">Panel Admin</span>
                     </div>
-                    <div class="sidebar-item px-6 py-3 cursor-pointer flex items-center text-white mt-6" onclick="logout()">
-                        <i class="fas fa-sign-out-alt mr-3"></i> Wylogowanie
+                    <div class="sidebar-item py-3 px-4 cursor-pointer" data-page="logout">
+                        <i class="fas fa-sign-out-alt mr-3 text-white"></i>
+                        <span class="text-white" data-translate="logout">Wylogowanie</span>
                     </div>
                 </nav>
             </div>
 
             <!-- Main Content -->
-            <div class="flex-1 overflow-auto">
-                <!-- Home Page -->
-                <div id="homePage" class="page p-8">
-                    <h1 class="text-3xl font-bold text-gray-800 mb-8">Panel główny</h1>
-                    <p class="text-gray-600 mb-8">Witaj w świecie harmonii sezonowości</p>
-                    
-                    <!-- Current Season -->
-                    <div class="card p-6 mb-8">
-                        <h2 class="text-xl font-semibold mb-4 flex items-center">
-                            <i class="fas fa-leaf text-green-500 mr-2"></i> 🌸 Wiosna - Czas odnowy
-                        </h2>
-                        <p class="text-gray-600 mb-4">Wzrost energii Yang, czas na świeże produkty i lekkie posiłki</p>
-                        <div class="bg-green-50 p-4 rounded-lg">
-                            <h3 class="font-semibold text-green-800 mb-2">Dzisiejsze zalecenia:</h3>
-                            <ul class="text-green-700 space-y-1">
-                                <li>• Jedz świeże zielone warzywa</li>
-                                <li>• Ćwicz rano na świeżym powietrzu</li>
-                                <li>• Pij ciepłą wodę z cytryną</li>
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <!-- Stats Cards -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                        <div class="stats-card p-6 rounded-lg">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-blue-100">Zapytania AI</p>
-                                    <p class="text-2xl font-bold">7/10</p>
-                                </div>
-                                <i class="fas fa-robot text-3xl text-blue-200"></i>
-                            </div>
-                        </div>
-                        <div class="bg-green-500 p-6 rounded-lg text-white">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-green-100">Przepisy</p>
-                                    <p class="text-2xl font-bold">23</p>
-                                </div>
-                                <i class="fas fa-utensils text-3xl text-green-200"></i>
-                            </div>
-                        </div>
-                        <div class="bg-purple-500 p-6 rounded-lg text-white">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-purple-100">Lista zakupów</p>
-                                    <p class="text-2xl font-bold">8</p>
-                                </div>
-                                <i class="fas fa-shopping-cart text-3xl text-purple-200"></i>
-                            </div>
-                        </div>
-                        <div class="bg-orange-500 p-6 rounded-lg text-white">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-orange-100">Aktualny sezon</p>
-                                    <p class="text-xl font-bold">Wiosna</p>
-                                </div>
-                                <i class="fas fa-seedling text-3xl text-orange-200"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Recent Recipes -->
-                    <div class="card p-6">
-                        <h2 class="text-xl font-semibold mb-4">Ostatnie przepisy</h2>
-                        <div class="space-y-4">
-                            <div class="flex items-center p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
-                                <div class="bg-green-100 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
-                                    <i class="fas fa-leaf text-green-600"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h3 class="font-semibold">Wiosenna sałatka z młodą marchewką</h3>
-                                    <p class="text-gray-600 text-sm">Sezonowe warzywa • Wygenerowano 2 godziny temu</p>
-                                </div>
-                                <i class="fas fa-heart text-red-500"></i>
-                            </div>
-                            <div class="flex items-center p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
-                                <div class="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
-                                    <i class="fas fa-fish text-blue-600"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h3 class="font-semibold">Ryba z imbirem i czosnkiem</h3>
-                                    <p class="text-gray-600 text-sm">Harmonia Yin-Yang • Wczoraj</p>
-                                </div>
-                                <i class="far fa-heart text-gray-400"></i>
-                            </div>
-                        </div>
-                    </div>
+            <div class="main-content ml-80 min-h-screen">
+                <!-- Mobile Header -->
+                <div class="lg:hidden bg-white shadow-sm p-4 flex items-center justify-between">
+                    <button id="mobileMenuBtn" class="primary-text">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h1 class="text-xl font-bold primary-text">TCM Harmony</h1>
+                    <div></div>
                 </div>
 
-                <!-- Calendar Page -->
-                <div id="calendarPage" class="page hidden p-8">
-                    <h1 class="text-3xl font-bold text-gray-800 mb-8">Kalendarz Sezonowości TCM</h1>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Spring -->
-                        <div class="season-card card p-6 cursor-pointer" onclick="showSeasonDetails('spring')">
-                            <div class="text-center">
-                                <div class="text-4xl mb-4">🌸</div>
-                                <h3 class="text-xl font-semibold text-green-700 mb-2">Wiosna</h3>
-                                <p class="text-gray-600 mb-4">Marzec - Maj</p>
-                                <div class="space-y-2 text-sm">
-                                    <div><strong>Element:</strong> Drewno</div>
-                                    <div><strong>Organ:</strong> Wątroba</div>
-                                    <div><strong>Emocja:</strong> Gniew/Cierpliwość</div>
-                                    <div><strong>Smak:</strong> Kwaśny</div>
-                                </div>
-                            </div>
+                <!-- Page Content -->
+                <div id="pageContent" class="p-8">
+                    <!-- Home Page -->
+                    <div id="homePage" class="page-content">
+                        <div class="mb-8">
+                            <h1 class="text-3xl font-bold text-gray-900 mb-2" data-translate="dashboard">Panel główny</h1>
+                            <p class="text-gray-600" data-translate="welcome_message">Witaj w świecie harmonii sezonowości</p>
                         </div>
-                        
-                        <!-- Summer -->
-                        <div class="season-card card p-6 cursor-pointer" onclick="showSeasonDetails('summer')">
-                            <div class="text-center">
-                                <div class="text-4xl mb-4">☀️</div>
-                                <h3 class="text-xl font-semibold text-red-700 mb-2">Lato</h3>
-                                <p class="text-gray-600 mb-4">Czerwiec - Sierpień</p>
-                                <div class="space-y-2 text-sm">
-                                    <div><strong>Element:</strong> Ogień</div>
-                                    <div><strong>Organ:</strong> Serce</div>
-                                    <div><strong>Emocja:</strong> Radość</div>
-                                    <div><strong>Smak:</strong> Gorzki</div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Late Summer -->
-                        <div class="season-card card p-6 cursor-pointer" onclick="showSeasonDetails('lateSummer')">
-                            <div class="text-center">
-                                <div class="text-4xl mb-4">🌾</div>
-                                <h3 class="text-xl font-semibold text-yellow-700 mb-2">Późne Lato</h3>
-                                <p class="text-gray-600 mb-4">Sierpień - Wrzesień</p>
-                                <div class="space-y-2 text-sm">
-                                    <div><strong>Element:</strong> Ziemia</div>
-                                    <div><strong>Organ:</strong> Śledziona</div>
-                                    <div><strong>Emocja:</strong> Zaduma</div>
-                                    <div><strong>Smak:</strong> Słodki</div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Autumn -->
-                        <div class="season-card card p-6 cursor-pointer" onclick="showSeasonDetails('autumn')">
-                            <div class="text-center">
-                                <div class="text-4xl mb-4">🍂</div>
-                                <h3 class="text-xl font-semibold text-orange-700 mb-2">Jesień</h3>
-                                <p class="text-gray-600 mb-4">Październik - Grudzień</p>
-                                <div class="space-y-2 text-sm">
-                                    <div><strong>Element:</strong> Metal</div>
-                                    <div><strong>Organ:</strong> Płuca</div>
-                                    <div><strong>Emocja:</strong> Smutek/Klarowność</div>
-                                    <div><strong>Smak:</strong> Ostry</div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Winter -->
-                        <div class="season-card card p-6 cursor-pointer" onclick="showSeasonDetails('winter')">
-                            <div class="text-center">
-                                <div class="text-4xl mb-4">❄️</div>
-                                <h3 class="text-xl font-semibold text-blue-700 mb-2">Zima</h3>
-                                <p class="text-gray-600 mb-4">Styczeń - Luty</p>
-                                <div class="space-y-2 text-sm">
-                                    <div><strong>Element:</strong> Woda</div>
-                                    <div><strong>Organ:</strong> Nerki</div>
-                                    <div><strong>Emocja:</strong> Strach/Mądrość</div>
-                                    <div><strong>Smak:</strong> Słony</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Season Details Modal -->
-                    <div id="seasonModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
-                        <div class="bg-white p-8 rounded-lg max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
-                            <div class="flex justify-between items-center mb-6">
-                                <h2 id="seasonModalTitle" class="text-2xl font-bold"></h2>
-                                <button onclick="closeSeasonModal()" class="text-gray-500 hover:text-gray-700">
-                                    <i class="fas fa-times text-xl"></i>
-                                </button>
-                            </div>
-                            <div id="seasonModalContent"></div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Recipes Page -->
-                <div id="recipesPage" class="page hidden p-8">
-                    <h1 class="text-3xl font-bold text-gray-800 mb-8">Generator przepisów AI</h1>
-                    <p class="text-gray-600 mb-8">Wygeneruj przepisy dostosowane do sezonowości i harmonii chińskiej</p>
-                    
-                    <!-- AI Generator -->
-                    <div class="card p-6 mb-8">
-                        <div class="mb-6">
-                            <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4 rounded-lg mb-4">
-                                <h2 class="text-lg font-semibold">Pozostałe zapytania AI</h2>
-                                <div class="text-3xl font-bold">7 / 10 miesięcznie</div>
-                                <p class="text-sm mt-2">Plan: Darmowy</p>
-                                <button class="bg-white text-purple-600 px-4 py-2 rounded-lg mt-2 font-semibold hover:bg-gray-100">
-                                    Upgrade do Premium
-                                </button>
+                        <!-- Current Season Card -->
+                        <div class="card p-6 mb-8 bg-gradient-to-r from-green-400 to-green-600 text-white">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-2xl font-bold mb-2" data-translate="current_season_spring">🌸 Wiosna - Czas odnowy</h3>
+                                    <p class="text-green-100" data-translate="spring_description">Wzrost energii Yang, czas na świeże produkty i lekkie posiłki</p>
+                                    <div class="mt-4 flex space-x-4 text-sm">
+                                        <span><i class="fas fa-tree mr-1"></i><span data-translate="element">Element</span>: <span data-translate="wood">Drewno</span></span>
+                                        <span><i class="fas fa-heart mr-1"></i><span data-translate="organ">Organ</span>: <span data-translate="liver">Wątroba</span></span>
+                                    </div>
+                                </div>
+                                <div class="text-6xl">🌸</div>
                             </div>
                         </div>
-                        
-                        <form onsubmit="generateRecipe(event)" class="space-y-4">
-                            <div>
-                                <label class="block text-gray-700 font-semibold mb-2">Składniki (opcjonalnie)</label>
-                                <input type="text" id="ingredients" placeholder="np. kurczak, brokuły, imbir" 
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
-                            </div>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-gray-700 font-semibold mb-2">Preferencje dietetyczne</label>
-                                    <select id="dietPreference" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
-                                        <option value="">Brak preferencji</option>
-                                        <option value="vegetarian">Wegetariańskie</option>
-                                        <option value="vegan">Wegańskie</option>
-                                        <option value="gluten-free">Bezglutenowe</option>
-                                        <option value="dairy-free">Bez laktozy</option>
-                                    </select>
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-gray-700 font-semibold mb-2">Sezon</label>
-                                    <select id="seasonPreference" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
-                                        <option value="current">Aktualny sezon (Wiosna)</option>
-                                        <option value="spring">Wiosna</option>
-                                        <option value="summer">Lato</option>
-                                        <option value="lateSummer">Późne Lato</option>
-                                        <option value="autumn">Jesień</option>
-                                        <option value="winter">Zima</option>
-                                    </select>
+
+                        <!-- Quick Stats -->
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                            <div class="card p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-600" data-translate="ai_queries_left">Zapytania AI pozostałe</p>
+                                        <p class="text-2xl font-bold primary-text">7/10</p>
+                                    </div>
+                                    <div class="w-12 h-12 primary-bg rounded-full flex items-center justify-center">
+                                        <i class="fas fa-robot text-white"></i>
+                                    </div>
                                 </div>
                             </div>
                             
-                            <button type="submit" class="btn-primary px-6 py-3 rounded-lg font-semibold">
-                                <i class="fas fa-magic mr-2"></i> Generuj przepis
-                            </button>
-                        </form>
-                        
-                        <!-- Generated Recipe -->
-                        <div id="generatedRecipe" class="mt-6 hidden">
-                            <div class="border-t pt-6">
-                                <h3 class="text-xl font-semibold mb-4">Wygenerowany przepis:</h3>
-                                <div class="bg-gray-50 p-6 rounded-lg">
-                                    <div id="recipeContent"></div>
-                                    <div class="mt-4 flex space-x-2">
-                                        <button onclick="saveRecipe()" class="btn-primary px-4 py-2 rounded-lg">
-                                            <i class="fas fa-heart mr-2"></i> Zapisz do ulubionych
-                                        </button>
-                                        <button onclick="shareRecipe()" class="btn-secondary px-4 py-2 rounded-lg">
-                                            <i class="fas fa-share mr-2"></i> Udostępnij
-                                        </button>
+                            <div class="card p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-600" data-translate="saved_recipes">Przepisy zapisane</p>
+                                        <p class="text-2xl font-bold text-purple-600">23</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-book text-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-600" data-translate="shopping_items">Produkty na liście</p>
+                                        <p class="text-2xl font-bold text-green-600">8</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-shopping-cart text-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-600" data-translate="harmony_progress">Postęp harmonii</p>
+                                        <p class="text-2xl font-bold gold-text">85%</p>
+                                    </div>
+                                    <div class="w-12 h-12 gold-bg rounded-full flex items-center justify-center">
+                                        <i class="fas fa-yin-yang text-white"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- Recipe Collection -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <!-- Favorites -->
+
+                        <!-- Recent Recipes -->
                         <div class="card p-6">
-                            <h2 class="text-xl font-semibold mb-4 flex items-center">
-                                <i class="fas fa-heart text-red-500 mr-2"></i> Ulubione przepisy
-                            </h2>
+                            <h3 class="text-xl font-bold text-gray-900 mb-4" data-translate="recent_recipes">Ostatnie przepisy</h3>
                             <div class="space-y-4">
-                                <div class="recipe-card border border-gray-200 p-4 cursor-pointer hover:shadow-md">
-                                    <div class="flex items-center">
-                                        <div class="bg-green-100 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                                             <i class="fas fa-leaf text-green-600"></i>
                                         </div>
-                                        <div class="flex-1">
-                                            <h3 class="font-semibold">Wiosenna sałatka detoks</h3>
-                                            <p class="text-gray-600 text-sm">Czas przygotowania: 15 min</p>
+                                        <div>
+                                            <h4 class="font-medium text-gray-900" data-translate="spring_carrot_salad">Wiosenna sałatka z młodą marchewką</h4>
+                                            <p class="text-sm text-gray-600" data-translate="seasonal_vegetables">Sezonowe warzywa • Wygenerowano 2 godziny temu</p>
                                         </div>
-                                        <i class="fas fa-heart text-red-500"></i>
                                     </div>
+                                    <i class="fas fa-heart text-red-500"></i>
                                 </div>
-                                <div class="recipe-card border border-gray-200 p-4 cursor-pointer hover:shadow-md">
-                                    <div class="flex items-center">
-                                        <div class="bg-orange-100 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
-                                            <i class="fas fa-fire text-orange-600"></i>
-                                        </div>
-                                        <div class="flex-1">
-                                            <h3 class="font-semibold">Rozgrzewająca zupa imbirowa</h3>
-                                            <p class="text-gray-600 text-sm">Czas przygotowania: 30 min</p>
-                                        </div>
-                                        <i class="fas fa-heart text-red-500"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- All Recipes -->
-                        <div class="card p-6">
-                            <h2 class="text-xl font-semibold mb-4 flex items-center">
-                                <i class="fas fa-book text-primary mr-2"></i> Wszystkie przepisy
-                            </h2>
-                            <div class="space-y-4">
-                                <div class="recipe-card border border-gray-200 p-4 cursor-pointer hover:shadow-md">
-                                    <div class="flex items-center">
-                                        <div class="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
+                                
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                                             <i class="fas fa-fish text-blue-600"></i>
                                         </div>
-                                        <div class="flex-1">
-                                            <h3 class="font-semibold">Ryba na parze z warzywami</h3>
-                                            <p class="text-gray-600 text-sm">Czas przygotowania: 25 min</p>
+                                        <div>
+                                            <h4 class="font-medium text-gray-900" data-translate="ginger_garlic_fish">Ryba z imbirem i czosnkiem</h4>
+                                            <p class="text-sm text-gray-600" data-translate="yin_yang_harmony">Harmonia Yin-Yang • Wczoraj</p>
                                         </div>
-                                        <i class="far fa-heart text-gray-400 cursor-pointer hover:text-red-500"></i>
                                     </div>
-                                </div>
-                                <div class="recipe-card border border-gray-200 p-4 cursor-pointer hover:shadow-md">
-                                    <div class="flex items-center">
-                                        <div class="bg-purple-100 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
-                                            <i class="fas fa-seedling text-purple-600"></i>
-                                        </div>
-                                        <div class="flex-1">
-                                            <h3 class="font-semibold">Congee z kaszą ryżową</h3>
-                                            <p class="text-gray-600 text-sm">Czas przygotowania: 45 min</p>
-                                        </div>
-                                        <i class="far fa-heart text-gray-400 cursor-pointer hover:text-red-500"></i>
-                                    </div>
+                                    <i class="far fa-heart text-gray-400"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Shopping Page -->
-                <div id="shoppingPage" class="page hidden p-8">
-                    <h1 class="text-3xl font-bold text-gray-800 mb-8">Lista zakupów</h1>
-                    
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <!-- Add Items -->
-                        <div class="lg:col-span-2">
-                            <div class="card p-6 mb-6">
-                                <h2 class="text-xl font-semibold mb-4">Dodaj produkty</h2>
-                                <form onsubmit="addShoppingItem(event)" class="flex space-x-2">
-                                    <input type="text" id="shoppingItem" placeholder="Wpisz nazwę produktu..." 
-                                           class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
-                                    <button type="submit" class="btn-primary px-6 py-2 rounded-lg">
-                                        <i class="fas fa-plus mr-2"></i> Dodaj
-                                    </button>
-                                </form>
+                    <!-- Calendar Page -->
+                    <div id="calendarPage" class="page-content hidden">
+                        <div class="mb-8">
+                            <h1 class="text-3xl font-bold text-gray-900 mb-2" data-translate="seasonal_calendar">Kalendarz sezonowości</h1>
+                            <p class="text-gray-600" data-translate="five_tcm_seasons">Pięć sezonów według Tradycyjnej Chińskiej Medycyny</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Spring -->
+                            <div class="season-card card p-6 border-l-4 border-green-500" data-season="spring">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-xl font-bold text-green-600" data-translate="spring">🌸 Wiosna</h3>
+                                    <span class="text-sm text-gray-500" data-translate="march_may">Marzec - Maj</span>
+                                </div>
+                                <div class="space-y-2 text-sm">
+                                    <p><span class="font-medium" data-translate="element">Element:</span> <span data-translate="wood">Drewno</span></p>
+                                    <p><span class="font-medium" data-translate="organ">Organ:</span> <span data-translate="liver">Wątroba</span></p>
+                                    <p><span class="font-medium" data-translate="emotion">Emocja:</span> <span data-translate="anger_patience">Gniew/Cierpliwość</span></p>
+                                    <p><span class="font-medium" data-translate="taste">Smak:</span> <span data-translate="sour">Kwaśny</span></p>
+                                </div>
+                                <div class="mt-4">
+                                    <p class="text-sm text-gray-600" data-translate="spring_foods">Zalecane produkty: młoda marchew, szpinak, zielone warzywa</p>
+                                </div>
                             </div>
-                            
-                            <!-- Shopping List -->
-                            <div class="card p-6">
-                                <div class="flex justify-between items-center mb-4">
-                                    <h2 class="text-xl font-semibold">Twoja lista zakupów</h2>
-                                    <button onclick="clearCompleted()" class="text-red-500 hover:text-red-700">
-                                        <i class="fas fa-trash mr-1"></i> Wyczyść zaznaczone
-                                    </button>
+
+                            <!-- Summer -->
+                            <div class="season-card card p-6 border-l-4 border-red-500" data-season="summer">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-xl font-bold text-red-600" data-translate="summer">☀️ Lato</h3>
+                                    <span class="text-sm text-gray-500" data-translate="june_august">Czerwiec - Sierpień</span>
                                 </div>
-                                
-                                <div id="shoppingList" class="space-y-3">
-                                    <!-- Items will be added here -->
+                                <div class="space-y-2 text-sm">
+                                    <p><span class="font-medium" data-translate="element">Element:</span> <span data-translate="fire">Ogień</span></p>
+                                    <p><span class="font-medium" data-translate="organ">Organ:</span> <span data-translate="heart">Serce</span></p>
+                                    <p><span class="font-medium" data-translate="emotion">Emocja:</span> <span data-translate="joy">Radość</span></p>
+                                    <p><span class="font-medium" data-translate="taste">Smak:</span> <span data-translate="bitter">Gorzki</span></p>
                                 </div>
-                                
-                                <div id="emptyShoppingList" class="text-center py-8 text-gray-500">
-                                    <i class="fas fa-shopping-cart text-4xl mb-4"></i>
-                                    <p>Twoja lista zakupów jest pusta</p>
-                                    <p class="text-sm">Dodaj produkty powyżej</p>
+                                <div class="mt-4">
+                                    <p class="text-sm text-gray-600" data-translate="summer_foods">Zalecane produkty: ogórki, pomidory, arbuzy, zielona herbata</p>
+                                </div>
+                            </div>
+
+                            <!-- Late Summer -->
+                            <div class="season-card card p-6 border-l-4 border-yellow-500" data-season="late-summer">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-xl font-bold text-yellow-600" data-translate="late_summer">🌾 Późne Lato</h3>
+                                    <span class="text-sm text-gray-500" data-translate="august_september">Sierpień - Wrzesień</span>
+                                </div>
+                                <div class="space-y-2 text-sm">
+                                    <p><span class="font-medium" data-translate="element">Element:</span> <span data-translate="earth">Ziemia</span></p>
+                                    <p><span class="font-medium" data-translate="organ">Organ:</span> <span data-translate="spleen">Śledziona</span></p>
+                                    <p><span class="font-medium" data-translate="emotion">Emocja:</span> <span data-translate="worry_thoughtfulness">Niepokój/Zamyślenie</span></p>
+                                    <p><span class="font-medium" data-translate="taste">Smak:</span> <span data-translate="sweet">Słodki</span></p>
+                                </div>
+                                <div class="mt-4">
+                                    <p class="text-sm text-gray-600" data-translate="late_summer_foods">Zalecane produkty: dynia, słodkie ziemniaki, miód</p>
+                                </div>
+                            </div>
+
+                            <!-- Autumn -->
+                            <div class="season-card card p-6 border-l-4 border-orange-500" data-season="autumn">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-xl font-bold text-orange-600" data-translate="autumn">🍂 Jesień</h3>
+                                    <span class="text-sm text-gray-500" data-translate="october_december">Październik - Grudzień</span>
+                                </div>
+                                <div class="space-y-2 text-sm">
+                                    <p><span class="font-medium" data-translate="element">Element:</span> <span data-translate="metal">Metal</span></p>
+                                    <p><span class="font-medium" data-translate="organ">Organ:</span> <span data-translate="lungs">Płuca</span></p>
+                                    <p><span class="font-medium" data-translate="emotion">Emocja:</span> <span data-translate="grief_courage">Smutek/Odwaga</span></p>
+                                    <p><span class="font-medium" data-translate="taste">Smak:</span> <span data-translate="spicy">Ostry</span></p>
+                                </div>
+                                <div class="mt-4">
+                                    <p class="text-sm text-gray-600" data-translate="autumn_foods">Zalecane produkty: gruszki, biała rzodkiew, imbir</p>
+                                </div>
+                            </div>
+
+                            <!-- Winter -->
+                            <div class="season-card card p-6 border-l-4 border-blue-500" data-season="winter">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-xl font-bold text-blue-600" data-translate="winter">❄️ Zima</h3>
+                                    <span class="text-sm text-gray-500" data-translate="january_february">Styczeń - Luty</span>
+                                </div>
+                                <div class="space-y-2 text-sm">
+                                    <p><span class="font-medium" data-translate="element">Element:</span> <span data-translate="water">Woda</span></p>
+                                    <p><span class="font-medium" data-translate="organ">Organ:</span> <span data-translate="kidneys">Nerki</span></p>
+                                    <p><span class="font-medium" data-translate="emotion">Emocja:</span> <span data-translate="fear_willpower">Strach/Siła woli</span></p>
+                                    <p><span class="font-medium" data-translate="taste">Smak:</span> <span data-translate="salty">Słony</span></p>
+                                </div>
+                                <div class="mt-4">
+                                    <p class="text-sm text-gray-600" data-translate="winter_foods">Zalecane produkty: fasola czarna, orzechy, gorące zupy</p>
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Templates and Stats -->
-                        <div class="space-y-6">
-                            <!-- Quick Templates -->
-                            <div class="card p-6">
-                                <h3 class="text-lg font-semibold mb-4">Szablony sezonowe</h3>
-                                <div class="space-y-2">
-                                    <button onclick="loadTemplate('spring')" class="w-full text-left p-3 bg-green-50 rounded-lg hover:bg-green-100">
-                                        <i class="fas fa-leaf text-green-600 mr-2"></i> Lista wiosenna
-                                    </button>
-                                    <button onclick="loadTemplate('summer')" class="w-full text-left p-3 bg-red-50 rounded-lg hover:bg-red-100">
-                                        <i class="fas fa-sun text-red-600 mr-2"></i> Lista letnia
-                                    </button>
-                                    <button onclick="loadTemplate('autumn')" class="w-full text-left p-3 bg-orange-50 rounded-lg hover:bg-orange-100">
-                                        <i class="fas fa-leaf text-orange-600 mr-2"></i> Lista jesienna
-                                    </button>
-                                    <button onclick="loadTemplate('winter')" class="w-full text-left p-3 bg-blue-50 rounded-lg hover:bg-blue-100">
-                                        <i class="fas fa-snowflake text-blue-600 mr-2"></i> Lista zimowa
+
+                        <!-- Season Details Modal -->
+                        <div id="seasonModal" class="modal">
+                            <div class="modal-content">
+                                <div class="flex justify-between items-center mb-6">
+                                    <h2 id="seasonModalTitle" class="text-2xl font-bold"></h2>
+                                    <button id="closeSeasonModal" class="text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-times text-xl"></i>
                                     </button>
                                 </div>
-                            </div>
-                            
-                            <!-- Shopping Stats -->
-                            <div class="card p-6">
-                                <h3 class="text-lg font-semibold mb-4">Statystyki</h3>
-                                <div class="space-y-3">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Produkty na liście:</span>
-                                        <span id="totalItems" class="font-semibold">0</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Kupione:</span>
-                                        <span id="completedItems" class="font-semibold text-green-600">0</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Pozostało:</span>
-                                        <span id="remainingItems" class="font-semibold text-orange-600">0</span>
-                                    </div>
-                                </div>
+                                <div id="seasonModalContent"></div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Settings Page -->
-                <div id="settingsPage" class="page hidden p-8">
-                    <h1 class="text-3xl font-bold text-gray-800 mb-8">Ustawienia</h1>
-                    
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <!-- Profile Settings -->
-                        <div class="card p-6">
-                            <h2 class="text-xl font-semibold mb-6 flex items-center">
-                                <i class="fas fa-user text-primary mr-2"></i> Profil użytkownika
-                            </h2>
-                            
-                            <form class="space-y-4">
-                                <div>
-                                    <label class="block text-gray-700 font-semibold mb-2">Email</label>
-                                    <input type="email" value="admin@tcmharmony.com" disabled 
-                                           class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50">
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-gray-700 font-semibold mb-2">Imię i nazwisko</label>
-                                    <input type="text" value="Administrator" 
-                                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-gray-700 font-semibold mb-2">Nowe hasło</label>
-                                    <input type="password" placeholder="Pozostaw puste, aby nie zmieniać" 
-                                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
-                                </div>
-                                
-                                <button type="submit" class="btn-primary px-6 py-2 rounded-lg">
-                                    <i class="fas fa-save mr-2"></i> Zapisz zmiany
-                                </button>
-                            </form>
+                    <!-- Recipes Page -->
+                    <div id="recipesPage" class="page-content hidden">
+                        <div class="mb-8">
+                            <h1 class="text-3xl font-bold text-gray-900 mb-2" data-translate="ai_recipe_generator">Generator przepisów AI</h1>
+                            <p class="text-gray-600" data-translate="ai_generator_description">Wygeneruj przepisy dostosowane do sezonowości i harmonii chińskiej</p>
                         </div>
-                        
-                        <!-- Language & Notifications -->
-                        <div class="space-y-6">
-                            <!-- Language Settings -->
-                            <div class="card p-6">
-                                <h2 class="text-xl font-semibold mb-6 flex items-center">
-                                    <i class="fas fa-globe text-primary mr-2"></i> Język i region
-                                </h2>
+
+                        <!-- AI Queries Counter -->
+                        <div class="card p-6 mb-8 bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-lg font-medium mb-2" data-translate="remaining_ai_queries">Pozostałe zapytania AI</h3>
+                                    <p class="text-3xl font-bold">7 <span class="text-lg">/ 10 <span data-translate="monthly">miesięcznie</span></span></p>
+                                    <p class="text-sm mt-1" data-translate="current_plan">Plan: Darmowy</p>
+                                </div>
+                                <button class="btn-gold" data-translate="upgrade_to_premium">Upgrade do Premium</button>
+                            </div>
+                        </div>
+
+                        <!-- Recipe Generator -->
+                        <div class="card p-6 mb-8">
+                            <h3 class="text-xl font-bold text-gray-900 mb-4" data-translate="generate_recipe">Wygeneruj przepis</h3>
+                            <form id="recipeForm" class="space-y-4">
+                                <div>
+                                    <label class="block text-gray-700 text-sm font-medium mb-2" data-translate="ingredients_optional">Składniki (opcjonalnie)</label>
+                                    <input type="text" id="recipeIngredients" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="np. kurczak, brokuły, imbir">
+                                </div>
                                 
-                                <div class="space-y-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-gray-700 font-semibold mb-2">Język aplikacji</label>
-                                        <div class="flex space-x-2">
-                                            <button onclick="setLanguage('pl')" class="btn-primary px-4 py-2 rounded-lg flex-1">
-                                                🇵🇱 Polski
-                                            </button>
-                                            <button onclick="setLanguage('en')" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg flex-1 hover:bg-gray-400">
-                                                🇺🇸 English
-                                            </button>
-                                        </div>
+                                        <label class="block text-gray-700 text-sm font-medium mb-2" data-translate="dietary_preferences">Preferencje dietetyczne</label>
+                                        <select id="dietaryPrefs" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                            <option value="none" data-translate="no_restrictions">Brak ograniczeń</option>
+                                            <option value="vegetarian" data-translate="vegetarian">Wegetariańskie</option>
+                                            <option value="vegan" data-translate="vegan">Wegańskie</option>
+                                            <option value="gluten-free" data-translate="gluten_free">Bezglutenowe</option>
+                                            <option value="dairy-free" data-translate="dairy_free">Bez laktozy</option>
+                                        </select>
                                     </div>
                                     
                                     <div>
-                                        <label class="block text-gray-700 font-semibold mb-2">Strefa czasowa</label>
-                                        <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
-                                            <option>Europe/Warsaw (UTC+1)</option>
-                                            <option>Europe/London (UTC+0)</option>
-                                            <option>America/New_York (UTC-5)</option>
+                                        <label class="block text-gray-700 text-sm font-medium mb-2" data-translate="season">Sezon</label>
+                                        <select id="seasonSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                            <option value="current" data-translate="current_season">Aktualny sezon</option>
+                                            <option value="spring" data-translate="spring">Wiosna</option>
+                                            <option value="summer" data-translate="summer">Lato</option>
+                                            <option value="late-summer" data-translate="late_summer">Późne Lato</option>
+                                            <option value="autumn" data-translate="autumn">Jesień</option>
+                                            <option value="winter" data-translate="winter">Zima</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <button type="submit" class="btn-primary w-full">
+                                    <i class="fas fa-magic mr-2"></i>
+                                    <span data-translate="generate_recipe">Wygeneruj przepis</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Generated Recipe -->
+                        <div id="generatedRecipe" class="card p-6 mb-8 hidden">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-bold text-gray-900" data-translate="generated_recipe">Wygenerowany przepis</h3>
+                                <button id="saveRecipe" class="text-red-500 hover:text-red-700">
+                                    <i class="far fa-heart text-xl"></i>
+                                </button>
+                            </div>
+                            <div id="recipeContent"></div>
+                        </div>
+
+                        <!-- Recipe Collection -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <!-- Favorites -->
+                            <div class="card p-6">
+                                <h3 class="text-xl font-bold text-gray-900 mb-4" data-translate="favorite_recipes">Ulubione przepisy</h3>
+                                <div id="favoriteRecipes" class="space-y-4">
+                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-leaf text-green-600"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="font-medium text-gray-900" data-translate="detox_spring_soup">Wiosenna zupa detoks</h4>
+                                                <p class="text-sm text-gray-600" data-translate="spring_15_min">Wiosna • 15 min</p>
+                                            </div>
+                                        </div>
+                                        <i class="fas fa-heart text-red-500"></i>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-snowflake text-blue-600"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="font-medium text-gray-900" data-translate="warming_winter_stew">Rozgrzewający gulasz zimowy</h4>
+                                                <p class="text-sm text-gray-600" data-translate="winter_45_min">Zima • 45 min</p>
+                                            </div>
+                                        </div>
+                                        <i class="fas fa-heart text-red-500"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- All Recipes -->
+                            <div class="card p-6">
+                                <h3 class="text-xl font-bold text-gray-900 mb-4" data-translate="all_recipes">Wszystkie przepisy</h3>
+                                <div id="allRecipes" class="space-y-4">
+                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-sun text-yellow-600"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="font-medium text-gray-900" data-translate="cooling_summer_salad">Chłodząca sałatka letnia</h4>
+                                                <p class="text-sm text-gray-600" data-translate="summer_10_min">Lato • 10 min</p>
+                                            </div>
+                                        </div>
+                                        <i class="far fa-heart text-gray-400"></i>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-leaf text-orange-600"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="font-medium text-gray-900" data-translate="autumn_immune_soup">Jesienna zupa na odporność</h4>
+                                                <p class="text-sm text-gray-600" data-translate="autumn_30_min">Jesień • 30 min</p>
+                                            </div>
+                                        </div>
+                                        <i class="far fa-heart text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shopping Page -->
+                    <div id="shoppingPage" class="page-content hidden">
+                        <div class="mb-8">
+                            <h1 class="text-3xl font-bold text-gray-900 mb-2" data-translate="shopping_list">Lista zakupów</h1>
+                            <p class="text-gray-600" data-translate="shopping_description">Zarządzaj listą zakupów z sugestiami sezonowymi</p>
+                        </div>
+
+                        <!-- Add Item -->
+                        <div class="card p-6 mb-8">
+                            <form id="addItemForm" class="flex space-x-4">
+                                <input type="text" id="newItemInput" class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="" data-translate-placeholder="add_product">
+                                <button type="submit" class="btn-primary">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    <span data-translate="add">Dodaj</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Shopping List -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <!-- Current List -->
+                            <div class="lg:col-span-2">
+                                <div class="card p-6">
+                                    <div class="flex items-center justify-between mb-6">
+                                        <h3 class="text-xl font-bold text-gray-900" data-translate="your_shopping_list">Twoja lista zakupów</h3>
+                                        <button id="clearCompleted" class="text-red-600 hover:text-red-800 text-sm font-medium hidden" data-translate="clear_completed">Wyczyść zaznaczone</button>
+                                    </div>
+                                    
+                                    <div id="shoppingItems" class="space-y-3">
+                                        <!-- Items will be added here dynamically -->
+                                    </div>
+                                    
+                                    <div id="emptyShoppingList" class="text-center py-12 text-gray-500">
+                                        <i class="fas fa-shopping-cart text-4xl mb-4"></i>
+                                        <p data-translate="empty_shopping_list">Twoja lista zakupów jest pusta</p>
+                                        <p class="text-sm" data-translate="add_items_hint">Dodaj produkty powyżej</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Seasonal Suggestions -->
+                            <div class="card p-6">
+                                <h3 class="text-xl font-bold text-gray-900 mb-4" data-translate="seasonal_suggestions">Sugestie sezonowe</h3>
+                                <div class="space-y-3">
+                                    <div class="p-3 bg-green-50 rounded-lg border border-green-200">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-sm font-medium text-green-800" data-translate="young_carrot">Młoda marchew</span>
+                                            <button class="text-green-600 hover:text-green-800 add-suggestion" data-item="Młoda marchew">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <p class="text-xs text-green-600" data-translate="supports_liver">Wspomaga wątrobę</p>
+                                    </div>
+                                    
+                                    <div class="p-3 bg-green-50 rounded-lg border border-green-200">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-sm font-medium text-green-800" data-translate="spinach">Szpinak</span>
+                                            <button class="text-green-600 hover:text-green-800 add-suggestion" data-item="Szpinak">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <p class="text-xs text-green-600" data-translate="cleansing_properties">Właściwości oczyszczające</p>
+                                    </div>
+                                    
+                                    <div class="p-3 bg-green-50 rounded-lg border border-green-200">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-sm font-medium text-green-800" data-translate="green_vegetables">Zielone warzywa</span>
+                                            <button class="text-green-600 hover:text-green-800 add-suggestion" data-item="Zielone warzywa">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <p class="text-xs text-green-600" data-translate="spring_energy">Energia wiosny</p>
+                                    </div>
+                                </div>
+
+                                <!-- Quick Templates -->
+                                <div class="mt-6">
+                                    <h4 class="font-medium text-gray-900 mb-3" data-translate="quick_templates">Szybkie szablony</h4>
+                                    <div class="space-y-2">
+                                        <button class="w-full p-2 text-left text-sm bg-gray-50 hover:bg-gray-100 rounded template-btn" data-template="spring">
+                                            <i class="fas fa-leaf mr-2 text-green-500"></i>
+                                            <span data-translate="spring_shopping">Lista wiosenna</span>
+                                        </button>
+                                        <button class="w-full p-2 text-left text-sm bg-gray-50 hover:bg-gray-100 rounded template-btn" data-template="detox">
+                                            <i class="fas fa-spa mr-2 text-blue-500"></i>
+                                            <span data-translate="detox_shopping">Lista detoks</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Page -->
+                    <div id="settingsPage" class="page-content hidden">
+                        <div class="mb-8">
+                            <h1 class="text-3xl font-bold text-gray-900 mb-2" data-translate="settings">Ustawienia</h1>
+                            <p class="text-gray-600" data-translate="settings_description">Personalizuj swoją aplikację TCM Harmony</p>
+                        </div>
+
+                        <div class="space-y-8">
+                            <!-- Profile Section -->
+                            <div class="card p-6">
+                                <h3 class="text-xl font-bold text-gray-900 mb-4" data-translate="profile">Profil</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-gray-700 text-sm font-medium mb-2" data-translate="email">Email</label>
+                                        <input type="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50" value="admin@tcmharmony.com" readonly>
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-700 text-sm font-medium mb-2" data-translate="full_name">Imię i nazwisko</label>
+                                        <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" value="Administrator">
+                                    </div>
+                                </div>
+                                <button class="mt-4 btn-primary" data-translate="save_changes">Zapisz zmiany</button>
+                            </div>
+
+                            <!-- Language Section -->
+                            <div class="card p-6">
+                                <h3 class="text-xl font-bold text-gray-900 mb-4" data-translate="language_region">Język i region</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-gray-700 text-sm font-medium mb-2" data-translate="interface_language">Język interfejsu</label>
+                                        <div class="language-switcher bg-gray-100 p-1">
+                                            <div class="language-option active" data-lang="pl">🇵🇱 Polski</div>
+                                            <div class="language-option" data-lang="en">🇺🇸 English</div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-700 text-sm font-medium mb-2" data-translate="timezone">Strefa czasowa</label>
+                                        <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                            <option>Europe/Warsaw</option>
+                                            <option>Europe/London</option>
+                                            <option>America/New_York</option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Notification Settings -->
-                            <div class="card p-6">
-                                <h2 class="text-xl font-semibold mb-6 flex items-center">
-                                    <i class="fas fa-bell text-primary mr-2"></i> Powiadomienia
-                                </h2>
-                                
-                                <div class="space-y-4">
-                                    <div class="flex justify-between items-center">
-                                        <div>
-                                            <h3 class="font-semibold">Przypomnienia o sezonach</h3>
-                                            <p class="text-gray-600 text-sm">Otrzymuj powiadomienia o zmianie sezonów</p>
-                                        </div>
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" checked>
-                                            <span class="slider"></span>
-                                        </label>
-                                    </div>
-                                    
-                                    <div class="flex justify-between items-center">
-                                        <div>
-                                            <h3 class="font-semibold">Nowe przepisy</h3>
-                                            <p class="text-gray-600 text-sm">Sugestie nowych przepisów AI</p>
-                                        </div>
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" checked>
-                                            <span class="slider"></span>
-                                        </label>
-                                    </div>
-                                    
-                                    <div class="flex justify-between items-center">
-                                        <div>
-                                            <h3 class="font-semibold">Limity AI</h3>
-                                            <p class="text-gray-600 text-sm">Powiadomienia o wyczerpywaniu limitów</p>
-                                        </div>
-                                        <label class="toggle-switch">
-                                            <input type="checkbox">
-                                            <span class="slider"></span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Admin Page -->
-                <div id="adminPage" class="page hidden p-8">
-                    <h1 class="text-3xl font-bold text-gray-800 mb-8">Panel Administracyjny</h1>
-                    
-                    <!-- Stats Overview -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                        <div class="bg-green-500 text-white p-6 rounded-lg">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-green-100">Stan systemu</p>
-                                    <p class="text-2xl font-bold">99.9%</p>
-                                    <p class="text-sm text-green-100">Uptime</p>
+                            <!-- Notifications Section -->
+                            <div class="card p-6">
+                                <h3 class="text-xl font-bold text-gray-900 mb-4" data-translate="notifications">Powiadomienia</h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <h4 class="font-medium text-gray-900" data-translate="season_reminders">Przypomnienia o sezonach</h4>
+                                            <p class="text-sm text-gray-600" data-translate="season_reminders_desc">Otrzymuj powiadomienia o zmianie sezonów</p>
+                                        </div>
+                                        <div class="toggle-switch active" data-setting="season-reminders">
+                                            <div class="toggle-handle"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <h4 class="font-medium text-gray-900" data-translate="new_recipes">Nowe przepisy</h4>
+                                            <p class="text-sm text-gray-600" data-translate="new_recipes_desc">Sugestie nowych przepisów AI</p>
+                                        </div>
+                                        <div class="toggle-switch active" data-setting="new-recipes">
+                                            <div class="toggle-handle"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <h4 class="font-medium text-gray-900" data-translate="ai_limits">Limity AI</h4>
+                                            <p class="text-sm text-gray-600" data-translate="ai_limits_desc">Powiadomienia o wyczerpywaniu limitów</p>
+                                        </div>
+                                        <div class="toggle-switch active" data-setting="ai-limits">
+                                            <div class="toggle-handle"></div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <i class="fas fa-server text-3xl text-green-200"></i>
                             </div>
-                        </div>
-                        
-                        <div class="bg-blue-500 text-white p-6 rounded-lg">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-blue-100">Użytkownicy</p>
-                                    <p class="text-2xl font-bold">1,247</p>
-                                    <p class="text-sm text-blue-100">+23 dziś</p>
+
+                            <!-- Privacy Section -->
+                            <div class="card p-6">
+                                <h3 class="text-xl font-bold text-gray-900 mb-4" data-translate="privacy_security">Prywatność i bezpieczeństwo</h3>
+                                <div class="space-y-4">
+                                    <button class="w-full p-4 text-left border border-gray-300 rounded-lg hover:bg-gray-50">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <h4 class="font-medium text-gray-900" data-translate="change_password">Zmień hasło</h4>
+                                                <p class="text-sm text-gray-600" data-translate="change_password_desc">Zaktualizuj hasło do konta</p>
+                                            </div>
+                                            <i class="fas fa-chevron-right text-gray-400"></i>
+                                        </div>
+                                    </button>
+                                    
+                                    <button class="w-full p-4 text-left border border-gray-300 rounded-lg hover:bg-gray-50">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <h4 class="font-medium text-gray-900" data-translate="export_data">Eksportuj dane</h4>
+                                                <p class="text-sm text-gray-600" data-translate="export_data_desc">Pobierz kopię swoich danych</p>
+                                            </div>
+                                            <i class="fas fa-chevron-right text-gray-400"></i>
+                                        </div>
+                                    </button>
                                 </div>
-                                <i class="fas fa-users text-3xl text-blue-200"></i>
                             </div>
-                        </div>
-                        
-                        <div class="bg-purple-500 text-white p-6 rounded-lg">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-purple-100">Zapytania AI</p>
-                                    <p class="text-2xl font-bold">3,456</p>
-                                    <p class="text-sm text-purple-100">Dzisiaj: 189</p>
+
+                            <!-- About Section -->
+                            <div class="card p-6">
+                                <h3 class="text-xl font-bold text-gray-900 mb-4" data-translate="about">O aplikacji</h3>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600" data-translate="version">Wersja</span>
+                                        <span class="font-medium">1.0.0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600" data-translate="last_update">Ostatnia aktualizacja</span>
+                                        <span class="font-medium">2024-01-15</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600" data-translate="developer">Deweloper</span>
+                                        <span class="font-medium">TCM Harmony Team</span>
+                                    </div>
                                 </div>
-                                <i class="fas fa-robot text-3xl text-purple-200"></i>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-red-500 text-white p-6 rounded-lg">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-red-100">Błędy</p>
-                                    <p class="text-2xl font-bold">2</p>
-                                    <p class="text-sm text-red-100">ostatnie 24h</p>
-                                </div>
-                                <i class="fas fa-exclamation-triangle text-3xl text-red-200"></i>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <!-- Repair Tools -->
-                        <div class="card p-6">
-                            <h2 class="text-xl font-semibold mb-6 flex items-center">
-                                <i class="fas fa-tools text-primary mr-2"></i> Narzędzia naprawy
-                            </h2>
+
+                    <!-- Admin Page -->
+                    <div id="adminPage" class="page-content hidden">
+                        <div class="mb-8">
+                            <h1 class="text-3xl font-bold text-gray-900 mb-2" data-translate="admin_panel">Panel Administracyjny</h1>
+                            <p class="text-gray-600" data-translate="admin_description">Zarządzaj systemem i monitoruj jego działanie</p>
+                        </div>
+
+                        <!-- System Stats -->
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                            <div class="card p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-600" data-translate="system_status">Stan systemu</p>
+                                        <p class="text-2xl font-bold text-green-600">99.9%</p>
+                                        <p class="text-sm text-green-600" data-translate="uptime">Uptime</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-heartbeat text-green-600"></i>
+                                    </div>
+                                </div>
+                            </div>
                             
-                            <div class="space-y-3">
-                                <button onclick="adminAction('clearCache')" class="w-full text-left p-3 bg-blue-50 rounded-lg hover:bg-blue-100 border border-blue-200">
-                                    <i class="fas fa-broom text-blue-600 mr-3"></i> Wyczyść cache aplikacji
-                                </button>
-                                
-                                <button onclick="adminAction('resetQueries')" class="w-full text-left p-3 bg-green-50 rounded-lg hover:bg-green-100 border border-green-200">
-                                    <i class="fas fa-undo text-green-600 mr-3"></i> Resetuj zapytania AI użytkowników
-                                </button>
-                                
-                                <button onclick="adminAction('optimizeDB')" class="w-full text-left p-3 bg-purple-50 rounded-lg hover:bg-purple-100 border border-purple-200">
-                                    <i class="fas fa-database text-purple-600 mr-3"></i> Optymalizuj bazę danych
-                                </button>
-                                
-                                <button onclick="adminAction('logoutAll')" class="w-full text-left p-3 bg-orange-50 rounded-lg hover:bg-orange-100 border border-orange-200">
-                                    <i class="fas fa-sign-out-alt text-orange-600 mr-3"></i> Wyloguj wszystkich użytkowników
-                                </button>
+                            <div class="card p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-600" data-translate="users">Użytkownicy</p>
+                                        <p class="text-2xl font-bold primary-text">1,247</p>
+                                        <p class="text-sm text-green-600">+23 <span data-translate="today">dziś</span></p>
+                                    </div>
+                                    <div class="w-12 h-12 primary-bg rounded-full flex items-center justify-center">
+                                        <i class="fas fa-users text-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-600" data-translate="ai_queries">Zapytania AI</p>
+                                        <p class="text-2xl font-bold text-purple-600">3,456</p>
+                                        <p class="text-sm text-green-600">189 <span data-translate="today">dziś</span></p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-robot text-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-600" data-translate="errors">Błędy</p>
+                                        <p class="text-2xl font-bold text-red-600">2</p>
+                                        <p class="text-sm text-gray-600" data-translate="last_24h">ostatnie 24h</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-exclamation-triangle text-red-600"></i>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        
-                        <!-- AI Configuration -->
-                        <div class="card p-6">
-                            <h2 class="text-xl font-semibold mb-6 flex items-center">
-                                <i class="fas fa-robot text-primary mr-2"></i> Konfiguracja AI
-                            </h2>
-                            
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-gray-700 font-semibold mb-2">Dostawca AI</label>
-                                    <select id="aiProvider" onchange="updateAIStatus()" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
-                                        <option value="openai">OpenAI GPT-4</option>
-                                        <option value="claude">Anthropic Claude</option>
-                                        <option value="gemini">Google Gemini</option>
-                                        <option value="custom">Custom API</option>
-                                    </select>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <!-- Repair Tools -->
+                            <div class="card p-6">
+                                <h3 class="text-xl font-bold text-gray-900 mb-4" data-translate="repair_tools">Narzędzia naprawy</h3>
+                                <div class="space-y-3">
+                                    <button class="w-full p-3 text-left bg-blue-50 hover:bg-blue-100 rounded-lg repair-btn" data-action="clear-cache">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-broom mr-3 text-blue-600"></i>
+                                            <span class="font-medium" data-translate="clear_cache">Wyczyść cache aplikacji</span>
+                                        </div>
+                                    </button>
+                                    
+                                    <button class="w-full p-3 text-left bg-green-50 hover:bg-green-100 rounded-lg repair-btn" data-action="reset-ai-queries">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-sync mr-3 text-green-600"></i>
+                                            <span class="font-medium" data-translate="reset_ai_queries">Resetuj zapytania AI użytkowników</span>
+                                        </div>
+                                    </button>
+                                    
+                                    <button class="w-full p-3 text-left bg-yellow-50 hover:bg-yellow-100 rounded-lg repair-btn" data-action="optimize-db">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-database mr-3 text-yellow-600"></i>
+                                            <span class="font-medium" data-translate="optimize_database">Optymalizuj bazę danych</span>
+                                        </div>
+                                    </button>
+                                    
+                                    <button class="w-full p-3 text-left bg-red-50 hover:bg-red-100 rounded-lg repair-btn" data-action="logout-all">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-sign-out-alt mr-3 text-red-600"></i>
+                                            <span class="font-medium" data-translate="logout_all_users">Wyloguj wszystkich użytkowników</span>
+                                        </div>
+                                    </button>
                                 </div>
-                                
-                                <div>
-                                    <label class="block text-gray-700 font-semibold mb-2">Klucz API</label>
-                                    <input type="password" id="apiKey" placeholder="sk-..." 
-                                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
+                            </div>
+
+                            <!-- AI Configuration -->
+                            <div class="card p-6">
+                                <h3 class="text-xl font-bold text-gray-900 mb-4" data-translate="ai_configuration">Konfiguracja AI</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-gray-700 text-sm font-medium mb-2" data-translate="ai_provider">Dostawca AI</label>
+                                        <select id="aiProvider" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                            <option value="openai">OpenAI GPT-4</option>
+                                            <option value="claude">Anthropic Claude</option>
+                                            <option value="gemini">Google Gemini</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-gray-700 text-sm font-medium mb-2" data-translate="api_key">Klucz API</label>
+                                        <input type="password" id="aiApiKey" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="sk-...">
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm text-gray-600" data-translate="connection_status">Status połączenia</span>
+                                        <span class="text-sm font-medium text-green-600" data-translate="connected">✅ Połączono</span>
+                                    </div>
+                                    
+                                    <button class="w-full btn-primary" data-translate="test_connection">Testuj połączenie</button>
                                 </div>
-                                
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-sm text-gray-600">Status połączenia:</span>
-                                    <span id="aiStatus" class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                                        <i class="fas fa-check-circle mr-1"></i> Połączono
-                                    </span>
-                                </div>
-                                
-                                <button onclick="testConnection()" class="btn-primary px-6 py-2 rounded-lg w-full">
-                                    <i class="fas fa-plug mr-2"></i> Testuj połączenie
-                                </button>
                             </div>
                         </div>
-                        
+
                         <!-- Stripe Configuration -->
-                        <div class="card p-6">
-                            <h2 class="text-xl font-semibold mb-6 flex items-center">
-                                <i class="fas fa-credit-card text-primary mr-2"></i> Konfiguracja Stripe
-                            </h2>
-                            
-                            <div class="space-y-4">
+                        <div class="card p-6 mt-8">
+                            <h3 class="text-xl font-bold text-gray-900 mb-4" data-translate="stripe_configuration">Konfiguracja Stripe</h3>
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 <div>
-                                    <label class="block text-gray-700 font-semibold mb-2">Publishable Key</label>
-                                    <input type="text" id="stripePublishable" placeholder="pk_test_..." 
-                                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
+                                    <label class="block text-gray-700 text-sm font-medium mb-2" data-translate="publishable_key">Publishable Key</label>
+                                    <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="pk_test_...">
                                 </div>
-                                
                                 <div>
-                                    <label class="block text-gray-700 font-semibold mb-2">Secret Key</label>
-                                    <input type="password" id="stripeSecret" placeholder="sk_test_..." 
-                                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
+                                    <label class="block text-gray-700 text-sm font-medium mb-2" data-translate="secret_key">Secret Key</label>
+                                    <input type="password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="sk_test_...">
                                 </div>
-                                
                                 <div>
-                                    <label class="block text-gray-700 font-semibold mb-2">Environment</label>
-                                    <select id="stripeEnv" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
-                                        <option value="test">Test</option>
-                                        <option value="live">Production</option>
+                                    <label class="block text-gray-700 text-sm font-medium mb-2" data-translate="webhook_secret">Webhook Secret</label>
+                                    <input type="password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="whsec_...">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 text-sm font-medium mb-2" data-translate="environment">Środowisko</label>
+                                    <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                        <option value="test" data-translate="test">Test</option>
+                                        <option value="live" data-translate="live">Produkcja</option>
                                     </select>
                                 </div>
-                                
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-sm text-gray-600">Status płatności:</span>
-                                    <span id="stripeStatus" class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                                        <i class="fas fa-check-circle mr-1"></i> Skonfigurowano
-                                    </span>
-                                </div>
-                                
-                                <button onclick="testStripe()" class="btn-primary px-6 py-2 rounded-lg w-full">
-                                    <i class="fas fa-credit-card mr-2"></i> Testuj Stripe
-                                </button>
                             </div>
-                        </div>
-                        
-                        <!-- System Monitoring -->
-                        <div class="card p-6">
-                            <h2 class="text-xl font-semibold mb-6 flex items-center">
-                                <i class="fas fa-chart-line text-primary mr-2"></i> Monitoring systemu
-                            </h2>
-                            
-                            <div class="space-y-4">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">CPU Usage:</span>
-                                    <span class="font-semibold">23%</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div class="bg-green-500 h-2 rounded-full" style="width: 23%"></div>
-                                </div>
-                                
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">Memory Usage:</span>
-                                    <span class="font-semibold">67%</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div class="bg-yellow-500 h-2 rounded-full" style="width: 67%"></div>
-                                </div>
-                                
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">API Response Time:</span>
-                                    <span class="font-semibold">245ms</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div class="bg-green-500 h-2 rounded-full" style="width: 75%"></div>
-                                </div>
-                                
-                                <button onclick="refreshMonitoring()" class="btn-secondary px-4 py-2 rounded-lg w-full">
-                                    <i class="fas fa-sync mr-2"></i> Odśwież dane
-                                </button>
-                            </div>
+                            <button class="mt-4 btn-primary" data-translate="save_stripe_config">Zapisz konfigurację Stripe</button>
                         </div>
                     </div>
                 </div>
@@ -969,461 +1123,925 @@
     </div>
 
     <!-- Notification -->
-    <div id="notification" class="notification bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg">
-        <div class="flex items-center">
-            <i class="fas fa-check-circle mr-2"></i>
-            <span id="notificationText"></span>
-        </div>
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle mr-2"></i>
+        <span id="notificationText"></span>
     </div>
 
     <script>
-        // Global state
+        // Translation data
+        const translations = {
+            pl: {
+                app_title: "TCM Harmony",
+                app_subtitle: "Tradycyjna Chińska Medycyna",
+                email: "Email",
+                password: "Hasło",
+                remember_me: "Zapamiętaj mnie",
+                forgot_password: "Zapomniałeś hasła?",
+                login: "Zaloguj się",
+                home: "Strona główna",
+                calendar: "Kalendarz",
+                recipes: "Przepisy",
+                shopping: "Zakupy",
+                settings: "Ustawienia",
+                admin_panel: "Panel Admin",
+                logout: "Wylogowanie",
+                dashboard: "Panel główny",
+                welcome_message: "Witaj w świecie harmonii sezonowości",
+                current_season_spring: "🌸 Wiosna - Czas odnowy",
+                spring_description: "Wzrost energii Yang, czas na świeże produkty i lekkie posiłki",
+                element: "Element",
+                wood: "Drewno",
+                organ: "Organ",
+                liver: "Wątroba",
+                ai_queries_left: "Zapytania AI pozostałe",
+                saved_recipes: "Przepisy zapisane",
+                shopping_items: "Produkty na liście",
+                harmony_progress: "Postęp harmonii",
+                recent_recipes: "Ostatnie przepisy",
+                spring_carrot_salad: "Wiosenna sałatka z młodą marchewką",
+                seasonal_vegetables: "Sezonowe warzywa • Wygenerowano 2 godziny temu",
+                ginger_garlic_fish: "Ryba z imbirem i czosnkiem",
+                yin_yang_harmony: "Harmonia Yin-Yang • Wczoraj",
+                seasonal_calendar: "Kalendarz sezonowości",
+                five_tcm_seasons: "Pięć sezonów według Tradycyjnej Chińskiej Medycyny",
+                spring: "Wiosna",
+                march_may: "Marzec - Maj",
+                emotion: "Emocja",
+                anger_patience: "Gniew/Cierpliwość",
+                taste: "Smak",
+                sour: "Kwaśny",
+                spring_foods: "Zalecane produkty: młoda marchew, szpinak, zielone warzywa",
+                summer: "Lato",
+                june_august: "Czerwiec - Sierpień",
+                fire: "Ogień",
+                heart: "Serce",
+                joy: "Radość",
+                bitter: "Gorzki",
+                summer_foods: "Zalecane produkty: ogórki, pomidory, arbuzy, zielona herbata",
+                late_summer: "Późne Lato",
+                august_september: "Sierpień - Wrzesień",
+                earth: "Ziemia",
+                spleen: "Śledziona",
+                worry_thoughtfulness: "Niepokój/Zamyślenie",
+                sweet: "Słodki",
+                late_summer_foods: "Zalecane produkty: dynia, słodkie ziemniaki, miód",
+                autumn: "Jesień",
+                october_december: "Październik - Grudzień",
+                metal: "Metal",
+                lungs: "Płuca",
+                grief_courage: "Smutek/Odwaga",
+                spicy: "Ostry",
+                autumn_foods: "Zalecane produkty: gruszki, biała rzodkiew, imbir",
+                winter: "Zima",
+                january_february: "Styczeń - Luty",
+                water: "Woda",
+                kidneys: "Nerki",
+                fear_willpower: "Strach/Siła woli",
+                salty: "Słony",
+                winter_foods: "Zalecane produkty: fasola czarna, orzechy, gorące zupy",
+                ai_recipe_generator: "Generator przepisów AI",
+                ai_generator_description: "Wygeneruj przepisy dostosowane do sezonowości i harmonii chińskiej",
+                remaining_ai_queries: "Pozostałe zapytania AI",
+                monthly: "miesięcznie",
+                current_plan: "Plan: Darmowy",
+                upgrade_to_premium: "Upgrade do Premium",
+                generate_recipe: "Wygeneruj przepis",
+                ingredients_optional: "Składniki (opcjonalnie)",
+                dietary_preferences: "Preferencje dietetyczne",
+                no_restrictions: "Brak ograniczeń",
+                vegetarian: "Wegetariańskie",
+                vegan: "Wegańskie",
+                gluten_free: "Bezglutenowe",
+                dairy_free: "Bez laktozy",
+                season: "Sezon",
+                current_season: "Aktualny sezon",
+                generated_recipe: "Wygenerowany przepis",
+                favorite_recipes: "Ulubione przepisy",
+                detox_spring_soup: "Wiosenna zupa detoks",
+                spring_15_min: "Wiosna • 15 min",
+                warming_winter_stew: "Rozgrzewający gulasz zimowy",
+                winter_45_min: "Zima • 45 min",
+                all_recipes: "Wszystkie przepisy",
+                cooling_summer_salad: "Chłodząca sałatka letnia",
+                summer_10_min: "Lato • 10 min",
+                autumn_immune_soup: "Jesienna zupa na odporność",
+                autumn_30_min: "Jesień • 30 min",
+                shopping_list: "Lista zakupów",
+                shopping_description: "Zarządzaj listą zakupów z sugestiami sezonowymi",
+                add_product: "Dodaj produkt...",
+                add: "Dodaj",
+                your_shopping_list: "Twoja lista zakupów",
+                clear_completed: "Wyczyść zaznaczone",
+                empty_shopping_list: "Twoja lista zakupów jest pusta",
+                add_items_hint: "Dodaj produkty powyżej",
+                seasonal_suggestions: "Sugestie sezonowe",
+                young_carrot: "Młoda marchew",
+                supports_liver: "Wspomaga wątrobę",
+                spinach: "Szpinak",
+                cleansing_properties: "Właściwości oczyszczające",
+                green_vegetables: "Zielone warzywa",
+                spring_energy: "Energia wiosny",
+                quick_templates: "Szybkie szablony",
+                spring_shopping: "Lista wiosenna",
+                detox_shopping: "Lista detoks",
+                settings_description: "Personalizuj swoją aplikację TCM Harmony",
+                profile: "Profil",
+                full_name: "Imię i nazwisko",
+                save_changes: "Zapisz zmiany",
+                language_region: "Język i region",
+                interface_language: "Język interfejsu",
+                timezone: "Strefa czasowa",
+                notifications: "Powiadomienia",
+                season_reminders: "Przypomnienia o sezonach",
+                season_reminders_desc: "Otrzymuj powiadomienia o zmianie sezonów",
+                new_recipes: "Nowe przepisy",
+                new_recipes_desc: "Sugestie nowych przepisów AI",
+                ai_limits: "Limity AI",
+                ai_limits_desc: "Powiadomienia o wyczerpywaniu limitów",
+                privacy_security: "Prywatność i bezpieczeństwo",
+                change_password: "Zmień hasło",
+                change_password_desc: "Zaktualizuj hasło do konta",
+                export_data: "Eksportuj dane",
+                export_data_desc: "Pobierz kopię swoich danych",
+                about: "O aplikacji",
+                version: "Wersja",
+                last_update: "Ostatnia aktualizacja",
+                developer: "Deweloper",
+                admin_description: "Zarządzaj systemem i monitoruj jego działanie",
+                system_status: "Stan systemu",
+                uptime: "Uptime",
+                users: "Użytkownicy",
+                today: "dziś",
+                ai_queries: "Zapytania AI",
+                errors: "Błędy",
+                last_24h: "ostatnie 24h",
+                repair_tools: "Narzędzia naprawy",
+                clear_cache: "Wyczyść cache aplikacji",
+                reset_ai_queries: "Resetuj zapytania AI użytkowników",
+                optimize_database: "Optymalizuj bazę danych",
+                logout_all_users: "Wyloguj wszystkich użytkowników",
+                ai_configuration: "Konfiguracja AI",
+                ai_provider: "Dostawca AI",
+                api_key: "Klucz API",
+                connection_status: "Status połączenia",
+                connected: "Połączono",
+                test_connection: "Testuj połączenie",
+                stripe_configuration: "Konfiguracja Stripe",
+                publishable_key: "Publishable Key",
+                secret_key: "Secret Key",
+                webhook_secret: "Webhook Secret",
+                environment: "Środowisko",
+                test: "Test",
+                live: "Produkcja",
+                save_stripe_config: "Zapisz konfigurację Stripe"
+            },
+            en: {
+                app_title: "TCM Harmony",
+                app_subtitle: "Traditional Chinese Medicine",
+                email: "Email",
+                password: "Password",
+                remember_me: "Remember me",
+                forgot_password: "Forgot password?",
+                login: "Sign In",
+                home: "Home",
+                calendar: "Calendar",
+                recipes: "Recipes",
+                shopping: "Shopping",
+                settings: "Settings",
+                admin_panel: "Admin Panel",
+                logout: "Logout",
+                dashboard: "Dashboard",
+                welcome_message: "Welcome to the world of seasonal harmony",
+                current_season_spring: "🌸 Spring - Time of renewal",
+                spring_description: "Yang energy growth, time for fresh products and light meals",
+                element: "Element",
+                wood: "Wood",
+                organ: "Organ",
+                liver: "Liver",
+                ai_queries_left: "AI queries remaining",
+                saved_recipes: "Saved recipes",
+                shopping_items: "Shopping list items",
+                harmony_progress: "Harmony progress",
+                recent_recipes: "Recent recipes",
+                spring_carrot_salad: "Spring young carrot salad",
+                seasonal_vegetables: "Seasonal vegetables • Generated 2 hours ago",
+                ginger_garlic_fish: "Fish with ginger and garlic",
+                yin_yang_harmony: "Yin-Yang harmony • Yesterday",
+                seasonal_calendar: "Seasonal calendar",
+                five_tcm_seasons: "Five seasons according to Traditional Chinese Medicine",
+                spring: "Spring",
+                march_may: "March - May",
+                emotion: "Emotion",
+                anger_patience: "Anger/Patience",
+                taste: "Taste",
+                sour: "Sour",
+                spring_foods: "Recommended foods: young carrot, spinach, green vegetables",
+                summer: "Summer",
+                june_august: "June - August",
+                fire: "Fire",
+                heart: "Heart",
+                joy: "Joy",
+                bitter: "Bitter",
+                summer_foods: "Recommended foods: cucumbers, tomatoes, watermelons, green tea",
+                late_summer: "Late Summer",
+                august_september: "August - September",
+                earth: "Earth",
+                spleen: "Spleen",
+                worry_thoughtfulness: "Worry/Thoughtfulness",
+                sweet: "Sweet",
+                late_summer_foods: "Recommended foods: pumpkin, sweet potatoes, honey",
+                autumn: "Autumn",
+                october_december: "October - December",
+                metal: "Metal",
+                lungs: "Lungs",
+                grief_courage: "Grief/Courage",
+                spicy: "Spicy",
+                autumn_foods: "Recommended foods: pears, white radish, ginger",
+                winter: "Winter",
+                january_february: "January - February",
+                water: "Water",
+                kidneys: "Kidneys",
+                fear_willpower: "Fear/Willpower",
+                salty: "Salty",
+                winter_foods: "Recommended foods: black beans, nuts, hot soups",
+                ai_recipe_generator: "AI Recipe Generator",
+                ai_generator_description: "Generate recipes adapted to seasonality and Chinese harmony",
+                remaining_ai_queries: "Remaining AI queries",
+                monthly: "monthly",
+                current_plan: "Plan: Free",
+                upgrade_to_premium: "Upgrade to Premium",
+                generate_recipe: "Generate recipe",
+                ingredients_optional: "Ingredients (optional)",
+                dietary_preferences: "Dietary preferences",
+                no_restrictions: "No restrictions",
+                vegetarian: "Vegetarian",
+                vegan: "Vegan",
+                gluten_free: "Gluten-free",
+                dairy_free: "Dairy-free",
+                season: "Season",
+                current_season: "Current season",
+                generated_recipe: "Generated recipe",
+                favorite_recipes: "Favorite recipes",
+                detox_spring_soup: "Spring detox soup",
+                spring_15_min: "Spring • 15 min",
+                warming_winter_stew: "Warming winter stew",
+                winter_45_min: "Winter • 45 min",
+                all_recipes: "All recipes",
+                cooling_summer_salad: "Cooling summer salad",
+                summer_10_min: "Summer • 10 min",
+                autumn_immune_soup: "Autumn immunity soup",
+                autumn_30_min: "Autumn • 30 min",
+                shopping_list: "Shopping list",
+                shopping_description: "Manage your shopping list with seasonal suggestions",
+                add_product: "Add product...",
+                add: "Add",
+                your_shopping_list: "Your shopping list",
+                clear_completed: "Clear completed",
+                empty_shopping_list: "Your shopping list is empty",
+                add_items_hint: "Add products above",
+                seasonal_suggestions: "Seasonal suggestions",
+                young_carrot: "Young carrot",
+                supports_liver: "Supports liver",
+                spinach: "Spinach",
+                cleansing_properties: "Cleansing properties",
+                green_vegetables: "Green vegetables",
+                spring_energy: "Spring energy",
+                quick_templates: "Quick templates",
+                spring_shopping: "Spring list",
+                detox_shopping: "Detox list",
+                settings_description: "Customize your TCM Harmony app",
+                profile: "Profile",
+                full_name: "Full name",
+                save_changes: "Save changes",
+                language_region: "Language & region",
+                interface_language: "Interface language",
+                timezone: "Timezone",
+                notifications: "Notifications",
+                season_reminders: "Season reminders",
+                season_reminders_desc: "Get notifications about season changes",
+                new_recipes: "New recipes",
+                new_recipes_desc: "AI recipe suggestions",
+                ai_limits: "AI limits",
+                ai_limits_desc: "Notifications about limit depletion",
+                privacy_security: "Privacy & security",
+                change_password: "Change password",
+                change_password_desc: "Update your account password",
+                export_data: "Export data",
+                export_data_desc: "Download a copy of your data",
+                about: "About",
+                version: "Version",
+                last_update: "Last update",
+                developer: "Developer",
+                admin_description: "Manage the system and monitor its operation",
+                system_status: "System status",
+                uptime: "Uptime",
+                users: "Users",
+                today: "today",
+                ai_queries: "AI queries",
+                errors: "Errors",
+                last_24h: "last 24h",
+                repair_tools: "Repair tools",
+                clear_cache: "Clear application cache",
+                reset_ai_queries: "Reset user AI queries",
+                optimize_database: "Optimize database",
+                logout_all_users: "Logout all users",
+                ai_configuration: "AI Configuration",
+                ai_provider: "AI Provider",
+                api_key: "API Key",
+                connection_status: "Connection status",
+                connected: "Connected",
+                test_connection: "Test connection",
+                stripe_configuration: "Stripe Configuration",
+                publishable_key: "Publishable Key",
+                secret_key: "Secret Key",
+                webhook_secret: "Webhook Secret",
+                environment: "Environment",
+                test: "Test",
+                live: "Live",
+                save_stripe_config: "Save Stripe configuration"
+            }
+        };
+
+        // App state
+        let currentLanguage = 'pl';
         let currentUser = null;
         let currentPage = 'home';
         let shoppingItems = [];
-        let aiQueries = 7;
-        let currentLanguage = 'pl';
-        
-        // Login function
-        function login(event) {
-            event.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeLanguage();
+            setupEventListeners();
             
-            // Simple authentication
-            const users = {
-                'admin@tcmharmony.com': { password: 'admin123', role: 'admin', name: 'Administrator' },
-                'user@tcmharmony.com': { password: 'user123', role: 'user', name: 'Użytkownik' },
-                'premium@tcmharmony.com': { password: 'premium123', role: 'premium', name: 'Premium' }
-            };
-            
-            if (users[email] && users[email].password === password) {
-                currentUser = { email, ...users[email] };
-                document.getElementById('loginScreen').classList.add('hidden');
-                document.getElementById('mainApp').classList.remove('hidden');
-                document.getElementById('userRole').textContent = `Witaj, ${currentUser.name}`;
-                
-                // Hide admin menu for non-admin users
-                if (currentUser.role !== 'admin') {
-                    document.getElementById('adminMenuItem').classList.add('hidden');
-                }
-                
-                showNotification('Zalogowano pomyślnie!');
+            // Check if user is logged in
+            const savedUser = localStorage.getItem('tcm_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showMainApp();
             } else {
-                showNotification('Błędne dane logowania', 'error');
+                showLoginScreen();
+            }
+        });
+
+        // Language functions
+        function initializeLanguage() {
+            const savedLang = localStorage.getItem('tcm_language') || 'pl';
+            setLanguage(savedLang);
+        }
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('tcm_language', lang);
+            
+            // Update all elements with translations
+            const elements = document.querySelectorAll('[data-translate]');
+            elements.forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+
+            // Update placeholders
+            const placeholderElements = document.querySelectorAll('[data-translate-placeholder]');
+            placeholderElements.forEach(element => {
+                const key = element.getAttribute('data-translate-placeholder');
+                if (translations[lang] && translations[lang][key]) {
+                    element.placeholder = translations[lang][key];
+                }
+            });
+
+            // Update language switchers
+            document.querySelectorAll('.language-option').forEach(option => {
+                const optionLang = option.getAttribute('data-lang');
+                option.classList.toggle('active', optionLang === lang);
+            });
+
+            // Update document language
+            document.documentElement.lang = lang;
+        }
+
+        // Event listeners
+        function setupEventListeners() {
+            // Language switchers
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('language-option')) {
+                    const lang = e.target.getAttribute('data-lang');
+                    setLanguage(lang);
+                }
+            });
+
+            // Login form
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', handleLogin);
+            }
+
+            // Navigation
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.sidebar-item')) {
+                    const page = e.target.closest('.sidebar-item').getAttribute('data-page');
+                    if (page === 'logout') {
+                        handleLogout();
+                    } else {
+                        navigateToPage(page);
+                    }
+                }
+            });
+
+            // Mobile menu
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileOverlay = document.getElementById('mobileOverlay');
+            const sidebar = document.getElementById('sidebar');
+
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    sidebar.classList.add('open');
+                    mobileOverlay.classList.add('show');
+                });
+            }
+
+            if (mobileOverlay) {
+                mobileOverlay.addEventListener('click', function() {
+                    sidebar.classList.remove('open');
+                    mobileOverlay.classList.remove('show');
+                });
+            }
+
+            // Recipe form
+            const recipeForm = document.getElementById('recipeForm');
+            if (recipeForm) {
+                recipeForm.addEventListener('submit', handleRecipeGeneration);
+            }
+
+            // Shopping form
+            const addItemForm = document.getElementById('addItemForm');
+            if (addItemForm) {
+                addItemForm.addEventListener('submit', handleAddShoppingItem);
+            }
+
+            // Season cards
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.season-card')) {
+                    const season = e.target.closest('.season-card').getAttribute('data-season');
+                    showSeasonDetails(season);
+                }
+            });
+
+            // Close season modal
+            const closeSeasonModal = document.getElementById('closeSeasonModal');
+            if (closeSeasonModal) {
+                closeSeasonModal.addEventListener('click', function() {
+                    document.getElementById('seasonModal').classList.remove('show');
+                });
+            }
+
+            // Toggle switches
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('toggle-switch') || e.target.closest('.toggle-switch')) {
+                    const toggle = e.target.classList.contains('toggle-switch') ? e.target : e.target.closest('.toggle-switch');
+                    toggle.classList.toggle('active');
+                    showNotification(currentLanguage === 'pl' ? 'Ustawienie zapisane' : 'Setting saved');
+                }
+            });
+
+            // Repair buttons
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.repair-btn')) {
+                    const action = e.target.closest('.repair-btn').getAttribute('data-action');
+                    handleRepairAction(action);
+                }
+            });
+
+            // Shopping suggestions
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.add-suggestion')) {
+                    const item = e.target.closest('.add-suggestion').getAttribute('data-item');
+                    addShoppingItem(item);
+                }
+            });
+
+            // Template buttons
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.template-btn')) {
+                    const template = e.target.closest('.template-btn').getAttribute('data-template');
+                    loadShoppingTemplate(template);
+                }
+            });
+        }
+
+        // Authentication functions
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Simple authentication check
+            if ((email === 'admin@tcmharmony.com' && password === 'admin123') ||
+                (email === 'user@tcmharmony.com' && password === 'user123') ||
+                (email === 'premium@tcmharmony.com' && password === 'premium123')) {
+                
+                currentUser = {
+                    email: email,
+                    role: email.includes('admin') ? 'admin' : email.includes('premium') ? 'premium' : 'user',
+                    name: email.includes('admin') ? 'Administrator' : email.includes('premium') ? 'Premium User' : 'User'
+                };
+                
+                localStorage.setItem('tcm_user', JSON.stringify(currentUser));
+                showMainApp();
+                showNotification(currentLanguage === 'pl' ? 'Zalogowano pomyślnie!' : 'Successfully logged in!');
+            } else {
+                showNotification(currentLanguage === 'pl' ? 'Błędne dane logowania!' : 'Invalid login credentials!', 'error');
             }
         }
-        
-        // Logout function
-        function logout() {
+
+        function handleLogout() {
+            localStorage.removeItem('tcm_user');
             currentUser = null;
+            showLoginScreen();
+            showNotification(currentLanguage === 'pl' ? 'Wylogowano pomyślnie' : 'Successfully logged out');
+        }
+
+        function showMainApp() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            
+            // Update user role display
+            const userRole = document.getElementById('userRole');
+            if (userRole && currentUser) {
+                const greeting = currentLanguage === 'pl' ? 'Witaj' : 'Welcome';
+                userRole.textContent = `${greeting}, ${currentUser.name}`;
+            }
+
+            // Show/hide admin menu
+            const adminMenuItem = document.getElementById('adminMenuItem');
+            if (adminMenuItem) {
+                adminMenuItem.style.display = currentUser && currentUser.role === 'admin' ? 'block' : 'none';
+            }
+
+            navigateToPage('home');
+        }
+
+        function showLoginScreen() {
             document.getElementById('loginScreen').classList.remove('hidden');
             document.getElementById('mainApp').classList.add('hidden');
-            document.getElementById('email').value = '';
-            document.getElementById('password').value = '';
-            showNotification('Wylogowano pomyślnie');
         }
-        
-        // Page navigation
-        function showPage(pageId) {
-            // Hide all pages
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.add('hidden');
-            });
+
+        // Navigation
+        function navigateToPage(page) {
+            currentPage = page;
             
-            // Remove active class from all sidebar items
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
+            
+            // Show current page
+            const targetPage = document.getElementById(page + 'Page');
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+            }
+            
+            // Update sidebar active state
             document.querySelectorAll('.sidebar-item').forEach(item => {
                 item.classList.remove('active');
+                if (item.getAttribute('data-page') === page) {
+                    item.classList.add('active');
+                }
             });
-            
-            // Show selected page
-            document.getElementById(pageId + 'Page').classList.remove('hidden');
-            
-            // Add active class to clicked sidebar item
-            event.target.closest('.sidebar-item').classList.add('active');
-            
-            currentPage = pageId;
+
+            // Initialize page-specific content
+            if (page === 'shopping') {
+                updateShoppingList();
+            }
         }
-        
+
+        // Recipe generation
+        function handleRecipeGeneration(e) {
+            e.preventDefault();
+            
+            const ingredients = document.getElementById('recipeIngredients').value;
+            const dietaryPrefs = document.getElementById('dietaryPrefs').value;
+            const season = document.getElementById('seasonSelect').value;
+            
+            // Show loading
+            const button = e.target.querySelector('button[type="submit"]');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<div class="loading-spinner"></div> Generowanie...';
+            button.disabled = true;
+            
+            // Simulate AI generation
+            setTimeout(() => {
+                const recipe = generateSampleRecipe(ingredients, dietaryPrefs, season);
+                displayGeneratedRecipe(recipe);
+                
+                button.innerHTML = originalText;
+                button.disabled = false;
+                
+                showNotification(currentLanguage === 'pl' ? 'Przepis wygenerowany!' : 'Recipe generated!');
+            }, 2000);
+        }
+
+        function generateSampleRecipe(ingredients, dietaryPrefs, season) {
+            const seasonText = currentLanguage === 'pl' ? 'Wiosna' : 'Spring';
+            const title = currentLanguage === 'pl' ? 
+                `Wiosenny przepis z harmonią TCM` : 
+                `Spring recipe with TCM harmony`;
+            
+            const description = currentLanguage === 'pl' ? 
+                `Lekki i odżywczy przepis dostosowany do energii wiosny. Wykorzystuje właściwości Yang do wspomagania wątroby i oczyszczania organizmu.` :
+                `Light and nourishing recipe adapted to spring energy. Uses Yang properties to support liver and cleanse the body.`;
+            
+            const ingredientsList = currentLanguage === 'pl' ? 
+                ['500g młodej marchewki', '200g świeżego szpinaku', '1 łyżka oleju sezamowego', 'Imbir (2cm kawałek)', 'Sól morska do smaku'] :
+                ['500g young carrots', '200g fresh spinach', '1 tbsp sesame oil', 'Ginger (2cm piece)', 'Sea salt to taste'];
+            
+            const instructions = currentLanguage === 'pl' ? 
+                ['Pokrój marchewkę w cienkie paski', 'Posiekaj imbir', 'Podgrzej olej na patelni', 'Dodaj imbir i smaż 30 sekund', 'Dodaj marchewkę, smaż 5 minut', 'Dodaj szpinak, smaż do zwiędnięcia', 'Dopraw solą i podawaj'] :
+                ['Cut carrots into thin strips', 'Mince the ginger', 'Heat oil in pan', 'Add ginger, stir-fry 30 seconds', 'Add carrots, stir-fry 5 minutes', 'Add spinach, stir-fry until wilted', 'Season with salt and serve'];
+            
+            return {
+                title,
+                description,
+                ingredients: ingredientsList,
+                instructions,
+                season: seasonText,
+                prepTime: '15 min',
+                tcmProperties: currentLanguage === 'pl' ? 
+                    'Wzmacnia energię Yang, wspomaga wątrobę, oczyszcza organizm' :
+                    'Strengthens Yang energy, supports liver, cleanses body'
+            };
+        }
+
+        function displayGeneratedRecipe(recipe) {
+            const recipeDiv = document.getElementById('generatedRecipe');
+            const contentDiv = document.getElementById('recipeContent');
+            
+            contentDiv.innerHTML = `
+                <h4 class="text-xl font-bold text-gray-900 mb-3">${recipe.title}</h4>
+                <p class="text-gray-600 mb-4">${recipe.description}</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h5 class="font-bold text-gray-900 mb-2">${currentLanguage === 'pl' ? 'Składniki:' : 'Ingredients:'}</h5>
+                        <ul class="list-disc list-inside space-y-1">
+                            ${recipe.ingredients.map(ing => `<li class="text-gray-700">${ing}</li>`).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h5 class="font-bold text-gray-900 mb-2">${currentLanguage === 'pl' ? 'Przygotowanie:' : 'Instructions:'}</h5>
+                        <ol class="list-decimal list-inside space-y-1">
+                            ${recipe.instructions.map(inst => `<li class="text-gray-700">${inst}</li>`).join('')}
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                    <h5 class="font-bold text-blue-900 mb-2">${currentLanguage === 'pl' ? 'Właściwości TCM:' : 'TCM Properties:'}</h5>
+                    <p class="text-blue-800">${recipe.tcmProperties}</p>
+                </div>
+                
+                <div class="mt-4 flex items-center justify-between text-sm text-gray-600">
+                    <span>${currentLanguage === 'pl' ? 'Sezon:' : 'Season:'} ${recipe.season}</span>
+                    <span>${currentLanguage === 'pl' ? 'Czas przygotowania:' : 'Prep time:'} ${recipe.prepTime}</span>
+                </div>
+            `;
+            
+            recipeDiv.classList.remove('hidden');
+        }
+
+        // Shopping list functions
+        function handleAddShoppingItem(e) {
+            e.preventDefault();
+            const input = document.getElementById('newItemInput');
+            const item = input.value.trim();
+            
+            if (item) {
+                addShoppingItem(item);
+                input.value = '';
+            }
+        }
+
+        function addShoppingItem(item) {
+            const newItem = {
+                id: Date.now(),
+                name: item,
+                completed: false,
+                category: getItemCategory(item)
+            };
+            
+            shoppingItems.push(newItem);
+            updateShoppingList();
+            showNotification(currentLanguage === 'pl' ? 'Produkt dodany!' : 'Item added!');
+        }
+
+        function getItemCategory(item) {
+            const vegetables = ['marchew', 'szpinak', 'warzywa', 'carrot', 'spinach', 'vegetables'];
+            const herbs = ['imbir', 'ginger', 'czosnek', 'garlic'];
+            
+            if (vegetables.some(v => item.toLowerCase().includes(v))) return 'vegetables';
+            if (herbs.some(h => item.toLowerCase().includes(h))) return 'herbs';
+            return 'other';
+        }
+
+        function updateShoppingList() {
+            const container = document.getElementById('shoppingItems');
+            const emptyState = document.getElementById('emptyShoppingList');
+            const clearButton = document.getElementById('clearCompleted');
+            
+            if (shoppingItems.length === 0) {
+                emptyState.classList.remove('hidden');
+                container.innerHTML = '';
+                clearButton.classList.add('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            
+            const hasCompleted = shoppingItems.some(item => item.completed);
+            clearButton.classList.toggle('hidden', !hasCompleted);
+            
+            container.innerHTML = shoppingItems.map(item => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg ${item.completed ? 'opacity-50' : ''}">
+                    <div class="flex items-center space-x-3">
+                        <input type="checkbox" ${item.completed ? 'checked' : ''} 
+                               onchange="toggleShoppingItem(${item.id})"
+                               class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <span class="${item.completed ? 'line-through text-gray-500' : 'text-gray-900'}">${item.name}</span>
+                        <span class="text-xs px-2 py-1 bg-gray-200 rounded-full">${getCategoryLabel(item.category)}</span>
+                    </div>
+                    <button onclick="removeShoppingItem(${item.id})" class="text-red-500 hover:text-red-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function getCategoryLabel(category) {
+            const labels = {
+                pl: { vegetables: 'Warzywa', herbs: 'Zioła', other: 'Inne' },
+                en: { vegetables: 'Vegetables', herbs: 'Herbs', other: 'Other' }
+            };
+            return labels[currentLanguage][category] || labels[currentLanguage]['other'];
+        }
+
+        function toggleShoppingItem(id) {
+            const item = shoppingItems.find(item => item.id === id);
+            if (item) {
+                item.completed = !item.completed;
+                updateShoppingList();
+            }
+        }
+
+        function removeShoppingItem(id) {
+            shoppingItems = shoppingItems.filter(item => item.id !== id);
+            updateShoppingList();
+            showNotification(currentLanguage === 'pl' ? 'Produkt usunięty' : 'Item removed');
+        }
+
+        function loadShoppingTemplate(template) {
+            const templates = {
+                spring: {
+                    pl: ['Młoda marchew', 'Szpinak', 'Zielone warzywa', 'Imbir', 'Zielona herbata'],
+                    en: ['Young carrot', 'Spinach', 'Green vegetables', 'Ginger', 'Green tea']
+                },
+                detox: {
+                    pl: ['Cytryna', 'Imbir', 'Kurkuma', 'Zielona herbata', 'Woda kokosowa'],
+                    en: ['Lemon', 'Ginger', 'Turmeric', 'Green tea', 'Coconut water']
+                }
+            };
+            
+            const items = templates[template][currentLanguage];
+            items.forEach(item => addShoppingItem(item));
+        }
+
+        // Season details modal
+        function showSeasonDetails(season) {
+            const modal = document.getElementById('seasonModal');
+            const title = document.getElementById('seasonModalTitle');
+            const content = document.getElementById('seasonModalContent');
+            
+            const seasonData = getSeasonData(season);
+            title.textContent = seasonData.name;
+            content.innerHTML = seasonData.content;
+            
+            modal.classList.add('show');
+        }
+
+        function getSeasonData(season) {
+            const seasons = {
+                spring: {
+                    pl: {
+                        name: '🌸 Wiosna',
+                        content: `
+                            <div class="space-y-4">
+                                <p class="text-gray-600">Wiosna to czas odnowy i wzrostu energii Yang. To idealny moment na oczyszczenie organizmu i wspomaganie wątroby.</p>
+                                
+                                <div>
+                                    <h4 class="font-bold mb-2">Zalecane produkty:</h4>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>Młoda marchew - wspomaga wątrobę</li>
+                                        <li>Szpinak - oczyszcza organizm</li>
+                                        <li>Zielone warzywa - energia Yang</li>
+                                        <li>Imbir - rozgrzewa i energetyzuje</li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-bold mb-2">Aktywności:</h4>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>Poranne ćwiczenia na świeżym powietrzu</li>
+                                        <li>Lekkie stretching</li>
+                                        <li>Meditation w naturze</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        `
+                    },
+                    en: {
+                        name: '🌸 Spring',
+                        content: `
+                            <div class="space-y-4">
+                                <p class="text-gray-600">Spring is a time of renewal and Yang energy growth. It's the perfect time to cleanse the body and support the liver.</p>
+                                
+                                <div>
+                                    <h4 class="font-bold mb-2">Recommended foods:</h4>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>Young carrots - support liver</li>
+                                        <li>Spinach - cleanses body</li>
+                                        <li>Green vegetables - Yang energy</li>
+                                        <li>Ginger - warms and energizes</li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-bold mb-2">Activities:</h4>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>Morning exercises outdoors</li>
+                                        <li>Light stretching</li>
+                                        <li>Meditation in nature</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        `
+                    }
+                }
+            };
+            
+            return seasons[season] ? seasons[season][currentLanguage] : { name: season, content: '' };
+        }
+
+        // Admin repair functions
+        function handleRepairAction(action) {
+            const messages = {
+                'clear-cache': {
+                    pl: 'Cache aplikacji wyczyszczony!',
+                    en: 'Application cache cleared!'
+                },
+                'reset-ai-queries': {
+                    pl: 'Zapytania AI zresetowane dla wszystkich użytkowników!',
+                    en: 'AI queries reset for all users!'
+                },
+                'optimize-db': {
+                    pl: 'Baza danych zoptymalizowana!',
+                    en: 'Database optimized!'
+                },
+                'logout-all': {
+                    pl: 'Wszyscy użytkownicy zostali wylogowani!',
+                    en: 'All users have been logged out!'
+                }
+            };
+            
+            const message = messages[action] ? messages[action][currentLanguage] : 'Action completed!';
+            showNotification(message);
+        }
+
         // Notification system
-        function showNotification(text, type = 'success') {
+        function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
             const notificationText = document.getElementById('notificationText');
             
-            notificationText.textContent = text;
-            
-            if (type === 'error') {
-                notification.className = 'notification bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg';
-            } else {
-                notification.className = 'notification bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg';
-            }
-            
+            notificationText.textContent = message;
+            notification.className = `notification ${type === 'error' ? 'bg-red-500' : 'bg-green-500'}`;
             notification.classList.add('show');
             
             setTimeout(() => {
                 notification.classList.remove('show');
             }, 3000);
         }
-        
-        // Recipe generator
-        function generateRecipe(event) {
-            event.preventDefault();
-            
-            if (aiQueries <= 0) {
-                showNotification('Wyczerpano limit zapytań AI na ten miesiąc', 'error');
-                return;
-            }
-            
-            const ingredients = document.getElementById('ingredients').value;
-            const dietPreference = document.getElementById('dietPreference').value;
-            const season = document.getElementById('seasonPreference').value;
-            
-            // Simulate AI generation
-            const recipeContent = document.getElementById('recipeContent');
-            recipeContent.innerHTML = `
-                <div class="loading mb-4"></div>
-                <p>Generowanie przepisu...</p>
-            `;
-            
-            document.getElementById('generatedRecipe').classList.remove('hidden');
-            
-            setTimeout(() => {
-                aiQueries--;
-                
-                const recipes = [
-                    {
-                        title: "Wiosenna sałatka detoks z młodą marchewką",
-                        ingredients: ["młoda marchewka", "szpinak", "ogórek", "imbir", "cytryna"],
-                        instructions: "1. Pokrój warzywa w cienkie paski\n2. Przygotuj dressing z imbiru i cytryny\n3. Wymieszaj wszystkie składniki\n4. Podawaj świeże",
-                        time: "15 minut",
-                        properties: "Chłodzi organizm, wspiera Yin"
-                    },
-                    {
-                        title: "Rozgrzewająca zupa imbirowa",
-                        ingredients: ["imbir", "cebula", "czosnek", "bulion warzywny", "pak choi"],
-                        instructions: "1. Podsmaż imbir, cebulę i czosnek\n2. Dodaj bulion i gotuj 10 minut\n3. Dodaj pak choi na końcu\n4. Dopraw solą i pieprzem",
-                        time: "25 minut",
-                        properties: "Rozgrzewa, wspiera Yang"
-                    }
-                ];
-                
-                const recipe = recipes[Math.floor(Math.random() * recipes.length)];
-                
-                recipeContent.innerHTML = `
-                    <h4 class="text-lg font-semibold mb-3">${recipe.title}</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <h5 class="font-semibold mb-2">Składniki:</h5>
-                            <ul class="list-disc list-inside text-sm space-y-1">
-                                ${recipe.ingredients.map(ing => `<li>${ing}</li>`).join('')}
-                            </ul>
-                        </div>
-                        <div>
-                            <h5 class="font-semibold mb-2">Czas przygotowania:</h5>
-                            <p class="text-sm">${recipe.time}</p>
-                            <h5 class="font-semibold mb-2 mt-3">Właściwości TCM:</h5>
-                            <p class="text-sm">${recipe.properties}</p>
-                        </div>
-                    </div>
-                    <div>
-                        <h5 class="font-semibold mb-2">Instrukcje:</h5>
-                        <pre class="text-sm whitespace-pre-wrap">${recipe.instructions}</pre>
-                    </div>
-                `;
-                
-                showNotification(`Przepis wygenerowany! Pozostało ${aiQueries} zapytań.`);
-            }, 2000);
-        }
-        
-        // Save recipe
-        function saveRecipe() {
-            showNotification('Przepis zapisany do ulubionych!');
-        }
-        
-        // Share recipe
-        function shareRecipe() {
-            showNotification('Link do przepisu skopiowany do schowka!');
-        }
-        
-        // Shopping list functions
-        function addShoppingItem(event) {
-            event.preventDefault();
-            const itemInput = document.getElementById('shoppingItem');
-            const itemName = itemInput.value.trim();
-            
-            if (itemName) {
-                const item = {
-                    id: Date.now(),
-                    name: itemName,
-                    completed: false,
-                    category: getItemCategory(itemName)
-                };
-                
-                shoppingItems.push(item);
-                renderShoppingList();
-                itemInput.value = '';
-                updateShoppingStats();
-                showNotification('Produkt dodany do listy!');
-            }
-        }
-        
-        function getItemCategory(itemName) {
-            const categories = {
-                'warzywa': ['marchewka', 'brokuły', 'szpinak', 'pomidor', 'ogórek'],
-                'owoce': ['jabłko', 'banan', 'pomarańcza', 'cytryna'],
-                'przyprawy': ['imbir', 'czosnek', 'sól', 'pieprz', 'kurkuma'],
-                'mięso': ['kurczak', 'wołowina', 'ryba', 'wieprzowina']
-            };
-            
-            for (const [category, items] of Object.entries(categories)) {
-                if (items.some(item => itemName.toLowerCase().includes(item))) {
-                    return category;
-                }
-            }
-            return 'inne';
-        }
-        
-        function renderShoppingList() {
-            const listContainer = document.getElementById('shoppingList');
-            const emptyMessage = document.getElementById('emptyShoppingList');
-            
-            if (shoppingItems.length === 0) {
-                listContainer.innerHTML = '';
-                emptyMessage.classList.remove('hidden');
-                return;
-            }
-            
-            emptyMessage.classList.add('hidden');
-            
-            listContainer.innerHTML = shoppingItems.map(item => `
-                <div class="flex items-center p-3 bg-gray-50 rounded-lg">
-                    <input type="checkbox" ${item.completed ? 'checked' : ''} 
-                           onchange="toggleItem(${item.id})" class="mr-3">
-                    <span class="${item.completed ? 'line-through text-gray-500' : ''} flex-1">
-                        ${item.name}
-                    </span>
-                    <span class="text-xs bg-gray-200 px-2 py-1 rounded mr-2">${item.category}</span>
-                    <button onclick="removeItem(${item.id})" class="text-red-500 hover:text-red-700">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            `).join('');
-        }
-        
-        function toggleItem(id) {
-            const item = shoppingItems.find(item => item.id === id);
-            if (item) {
-                item.completed = !item.completed;
-                renderShoppingList();
-                updateShoppingStats();
-            }
-        }
-        
-        function removeItem(id) {
-            shoppingItems = shoppingItems.filter(item => item.id !== id);
-            renderShoppingList();
-            updateShoppingStats();
-            showNotification('Produkt usunięty z listy');
-        }
-        
-        function clearCompleted() {
-            const completedCount = shoppingItems.filter(item => item.completed).length;
-            shoppingItems = shoppingItems.filter(item => !item.completed);
-            renderShoppingList();
-            updateShoppingStats();
-            showNotification(`Usunięto ${completedCount} produktów`);
-        }
-        
-        function updateShoppingStats() {
-            const total = shoppingItems.length;
-            const completed = shoppingItems.filter(item => item.completed).length;
-            const remaining = total - completed;
-            
-            document.getElementById('totalItems').textContent = total;
-            document.getElementById('completedItems').textContent = completed;
-            document.getElementById('remainingItems').textContent = remaining;
-        }
-        
-        function loadTemplate(season) {
-            const templates = {
-                spring: ['młoda marchewka', 'szpinak', 'imbir', 'cytryna', 'zielona herbata'],
-                summer: ['ogórek', 'pomidor', 'arbuz', 'mięta', 'lodowa herbata'],
-                autumn: ['dynia', 'jabłka', 'cynamon', 'imbir', 'miód'],
-                winter: ['kapusta', 'czosnek', 'cebula', 'imbir', 'goji']
-            };
-            
-            const items = templates[season] || [];
-            items.forEach(itemName => {
-                const item = {
-                    id: Date.now() + Math.random(),
-                    name: itemName,
-                    completed: false,
-                    category: getItemCategory(itemName)
-                };
-                shoppingItems.push(item);
-            });
-            
-            renderShoppingList();
-            updateShoppingStats();
-            showNotification(`Załadowano szablon ${season === 'spring' ? 'wiosenny' : season === 'summer' ? 'letni' : season === 'autumn' ? 'jesienny' : 'zimowy'}!`);
-        }
-        
-        // Settings functions
-        function setLanguage(lang) {
-            currentLanguage = lang;
-            const buttons = document.querySelectorAll('[onclick^="setLanguage"]');
-            buttons.forEach(btn => {
-                btn.className = btn.onclick.toString().includes(lang) ? 
-                    'btn-primary px-4 py-2 rounded-lg flex-1' : 
-                    'bg-gray-300 text-gray-700 px-4 py-2 rounded-lg flex-1 hover:bg-gray-400';
-            });
-            showNotification(`Język zmieniony na ${lang === 'pl' ? 'polski' : 'English'}`);
-        }
-        
-        // Admin functions
-        function adminAction(action) {
-            const actions = {
-                clearCache: 'Cache aplikacji wyczyszczony!',
-                resetQueries: 'Zapytania AI wszystkich użytkowników zresetowane!',
-                optimizeDB: 'Baza danych zoptymalizowana!',
-                logoutAll: 'Wszyscy użytkownicy zostali wylogowani!'
-            };
-            
-            showNotification(actions[action] || 'Akcja wykonana pomyślnie!');
-        }
-        
-        function updateAIStatus() {
-            const provider = document.getElementById('aiProvider').value;
-            const status = document.getElementById('aiStatus');
-            
-            const providers = {
-                openai: 'OpenAI GPT-4',
-                claude: 'Anthropic Claude',
-                gemini: 'Google Gemini',
-                custom: 'Custom API'
-            };
-            
-            status.innerHTML = `<i class="fas fa-check-circle mr-1"></i> Połączono: ${providers[provider]}`;
-        }
-        
-        function testConnection() {
-            const button = event.target;
-            const originalText = button.innerHTML;
-            
-            button.innerHTML = '<div class="loading mr-2"></div> Testowanie...';
-            button.disabled = true;
-            
-            setTimeout(() => {
-                button.innerHTML = originalText;
-                button.disabled = false;
-                showNotification('Połączenie z AI działa prawidłowo!');
-            }, 2000);
-        }
-        
-        function testStripe() {
-            const button = event.target;
-            const originalText = button.innerHTML;
-            
-            button.innerHTML = '<div class="loading mr-2"></div> Testowanie...';
-            button.disabled = true;
-            
-            setTimeout(() => {
-                button.innerHTML = originalText;
-                button.disabled = false;
-                showNotification('Stripe skonfigurowany poprawnie!');
-            }, 2000);
-        }
-        
-        function refreshMonitoring() {
-            showNotification('Dane monitoringu odświeżone!');
-        }
-        
-        // Season details
-        function showSeasonDetails(season) {
-            const seasonData = {
-                spring: {
-                    title: '🌸 Wiosna - Sezon Drewna',
-                    content: `
-                        <div class="space-y-4">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div><strong>Element:</strong> Drewno</div>
-                                <div><strong>Organ:</strong> Wątroba</div>
-                                <div><strong>Emocja:</strong> Gniew/Cierpliwość</div>
-                                <div><strong>Smak:</strong> Kwaśny</div>
-                                <div><strong>Kolor:</strong> Zielony</div>
-                                <div><strong>Kierunek:</strong> Wschód</div>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold mb-2">Zalecane produkty:</h4>
-                                <ul class="list-disc list-inside space-y-1">
-                                    <li>Młoda marchewka, szpinak, szczypiorek</li>
-                                    <li>Imbir, czosnek niedźwiedzi</li>
-                                    <li>Zielona herbata, cytryna</li>
-                                    <li>Lekkie zupy, świeże sałatki</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold mb-2">Zalecenia:</h4>
-                                <ul class="list-disc list-inside space-y-1">
-                                    <li>Ćwicz rano na świeżym powietrzu</li>
-                                    <li>Jedz lekko i świeżo</li>
-                                    <li>Pracuj nad cierpliwością</li>
-                                    <li>Detoksykuj organizm</li>
-                                </ul>
-                            </div>
-                        </div>
-                    `
-                },
-                // Add other seasons...
-            };
-            
-            const modal = document.getElementById('seasonModal');
-            const title = document.getElementById('seasonModalTitle');
-            const content = document.getElementById('seasonModalContent');
-            
-            if (seasonData[season]) {
-                title.textContent = seasonData[season].title;
-                content.innerHTML = seasonData[season].content;
-                modal.classList.remove('hidden');
-            }
-        }
-        
-        function closeSeasonModal() {
-            document.getElementById('seasonModal').classList.add('hidden');
-        }
-        
-        // Initialize app
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize shopping stats
-            updateShoppingStats();
-            
-            // Add some default shopping items for demo
-            const demoItems = [
-                { id: 1, name: 'Młoda marchewka', completed: false, category: 'warzywa' },
-                { id: 2, name: 'Imbir', completed: true, category: 'przyprawy' },
-                { id: 3, name: 'Szpinak', completed: false, category: 'warzywa' }
-            ];
-            
-            shoppingItems = demoItems;
-            renderShoppingList();
-            updateShoppingStats();
-        });
-        
-        // Close modal when clicking outside
-        document.addEventListener('click', function(event) {
-            const modal = document.getElementById('seasonModal');
-            if (event.target === modal) {
-                closeSeasonModal();
-            }
-        });
+
+        // Global functions for inline event handlers
+        window.toggleShoppingItem = toggleShoppingItem;
+        window.removeShoppingItem = removeShoppingItem;
     </script>
 </body>
 </html>
     <script id="html_badge_script1">
         window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
-            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDhOZSKGL4UcNLcG%2BbJ%2FLNFnSzBXjGaVxGDGCpy1H%2FY1bUMyH%2B3MRHmMgei%2FDKmh3zmy82zTxi7n2WYN47Xjsu1tiqUY%2FzfLG7i8LrJ2yS%2Bw8mlfkgi9jEqdGyhkc3RRbYE7Rj1hmviOXGYkSzPOjFu76fbfVo81ktnpc2a%2FXY7uA%2Fm0GA8ZvkXhCNRc%2B9GJHRoh1lf0Bvi%2B3cLal0XuSxZY17PmYIAJXS0xv21tQJlblA51FBwVbaE2583sqN7PBoWK9ERBpzdFify2KiW6JwH6jYS860qmc3%2BRedbOugG7skymTv97ttrDUKcq5Al9LUxPCfJxzk1vtbY7%2FLZP4u9VjCXTn%2B1IuqOE63pKMtkbAGV1sUhmhsQu26jfMUxgieNh%2BM%2FOntwruE5b8DnlUS3wQ%2F8SZd%2FsW6POn3h3i%2F7rP6YuQutt1%2BHQp3AhWywR%2FNZHFC3eo8IC9iDtpOmgRc3l6J8QPcD5gJ468Mw%2BO6pfGlmCltgP0n96U6EoyQe6Z40tPkJXpGJeZq205iPjrg5I%3D";
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDo7LQhjMdHZinJaqHVMmCe1XRcaA5U7UEgekBJAtQTsF%2FkuYiL7eEmRXmgFDDUYMTvQyKZTEx%2FVwJuMcQMQThh9c%2FV%2BfUtHYLnDfYF9hB6OYjrbusCYH%2F9DqN%2BqZ0ooxEIq3NL8T%2BXtke1B7HHX0nv7E1vYPDcEaeHcaS9UNfB9ivDj8Yr%2FnlXldtUrT%2FnZiLvY9hbbJqKaPPsQOT2bBXX55m2EAcav%2FwUkDCPL8LCGR5toC9G%2BbVzMcgotkjSCgXsiXjSj235cd8DJpcMpNkDfR81SYQPH2ewXmz96SNxpSLRXEZTZgRTI%2BSrlD0dm95Tj5MrRsTxTE8DFhSP35VFZj82SU%2Ftw6SIUGplxYrZzbkV%2F2z3yeTfCKAswCZiLy9O9Qa0YJiSUB7gUfW%2BHqxrpylRB%2BETSpr0qx0kpckNTQ8WgwnKQFMUSFqVdoU2PjLqfo4X%2FYQ%2F3LiIQ9AyyPU1Os2QArVVKDoLBFjAWvMmRukq4dN4dy%2BFBQxu3d0fyCJxaESWvxhrr7AAwVLJfEEX0%3D";
         window.__genspark_locale = "en-US";
-        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDhOZSKGL4UcNLcG+bJ/LNFnSzBXjGaVxGDGCpy1H/Y1bUMyH+3MRHmMgei/DKmh3zmy82zTxi7n2WYN47Xjsu1tiqUY/zfLG7i8LrJ2yS+w8mlfkgi9jEqdGyhkc3RRbYE7Rj1hmviOXGYkSzPOjFu76fbfVo81ktnpc2a/XY7uA/m0GA8ZvkXhCNRc+9GJHRoh1lf0Bvi+3cLal0XuSxZY17PmYIAJXS0xv21tQJlblA51FBwVbaE2583sqN7PBoWK9ERBpzdFify2KiW6JwH6jYS860qmc3+RedbOugG7skymTv97ttrDUKcq5Al9LUxPCfJxzk1vtbY7/LZP4u9VjCXTn+1IuqOE63pKMtkbAGV1sUhmhsQu26jfMUxgieNh+M/OntwruE5b8DnlUS3wQ/8SZd/sW6POn3h3i/7rP6YuQutt1+HQp3AhWywR/NZHFC3eo8IC9iDtpOmgRc3l6J8QPcD5gJ468Mw+O6pfGlmCltgP0n96U6EoyQe6Z40tPkJXpGJeZq205iPjrg5I=";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDo7LQhjMdHZinJaqHVMmCe1XRcaA5U7UEgekBJAtQTsF/kuYiL7eEmRXmgFDDUYMTvQyKZTEx/VwJuMcQMQThh9c/V+fUtHYLnDfYF9hB6OYjrbusCYH/9DqN+qZ0ooxEIq3NL8T+Xtke1B7HHX0nv7E1vYPDcEaeHcaS9UNfB9ivDj8Yr/nlXldtUrT/nZiLvY9hbbJqKaPPsQOT2bBXX55m2EAcav/wUkDCPL8LCGR5toC9G+bVzMcgotkjSCgXsiXjSj235cd8DJpcMpNkDfR81SYQPH2ewXmz96SNxpSLRXEZTZgRTI+SrlD0dm95Tj5MrRsTxTE8DFhSP35VFZj82SU/tw6SIUGplxYrZzbkV/2z3yeTfCKAswCZiLy9O9Qa0YJiSUB7gUfW+HqxrpylRB+ETSpr0qx0kpckNTQ8WgwnKQFMUSFqVdoU2PjLqfo4X/YQ/3LiIQ9AyyPU1Os2QArVVKDoLBFjAWvMmRukq4dN4dy+FBQxu3d0fyCJxaESWvxhrr7AAwVLJfEEX0=";
     </script>
     
     <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
